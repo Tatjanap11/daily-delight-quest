@@ -238,12 +238,12 @@ const Index = () => {
           <div className="space-y-8">
             {currentTab === 'game' && (
               <div className="grid gap-8 lg:grid-cols-2">
-                <PuzzleGame 
+                <PuzzleGame
                   onComplete={handlePuzzleComplete}
                   completed={todayCompleted}
                   userLevel={userStats.level}
                 />
-                <SurpriseBox 
+                <SurpriseBox
                   canOpen={todayCompleted}
                   onBoxOpened={handleBoxOpened}
                   userLevel={userStats.level}

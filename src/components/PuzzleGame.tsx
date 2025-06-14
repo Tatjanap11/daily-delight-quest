@@ -105,11 +105,17 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
   const [isCorrect, setIsCorrect] = useState(false);
   const [isPracticeMode, setIsPracticeMode] = useState(false);
   const [practiceCount, setPracticeCount] = useState(0);
+  const [showPostCompletion, setShowPostCompletion] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     selectPuzzle();
   }, [userLevel, isPracticeMode, practiceCount]);
+
+  useEffect(() => {
+    // Always reset showPostCompletion when daily challenge completion status changes
+    setShowPostCompletion(false);
+  }, [completed]);
 
   const selectPuzzle = () => {
     if (isPracticeMode) {
@@ -146,7 +152,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     if (normalizedAnswer === correctAnswer) {
       setIsCorrect(true);
       const bonusPoints = Math.max(0, currentPuzzle.points - (attempts * 5));
-      const practiceMultiplier = isPracticeMode ? 0.5 : 1; // Half points for practice mode
+      const practiceMultiplier = isPracticeMode ? 0.5 : 1;
       const finalPoints = Math.floor(bonusPoints * practiceMultiplier);
       
       console.log('Puzzle solved! Awarding points:', finalPoints);
@@ -158,6 +164,9 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
         description: `✨ You earned ${finalPoints} ${isPracticeMode ? 'practice ' : 'magical '}points! ${!isPracticeMode ? 'The surprise box is sparkling and ready!' : ''} ✨`,
         className: "bg-gradient-to-r from-emerald-800 to-green-800 border-emerald-600 shadow-xl text-emerald-200"
       });
+
+      // Show post-completion (practice more) regardless of mode
+      setShowPostCompletion(true);
     } else {
       setAttempts(prev => prev + 1);
       toast({
@@ -169,7 +178,9 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
   };
 
   const handleNextPractice = () => {
+    setIsPracticeMode(true);
     setPracticeCount(prev => prev + 1);
+    setShowPostCompletion(false);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -229,7 +240,8 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
       </CardHeader>
       
       <CardContent className="space-y-6">
-        {(completed && !isPracticeMode) || isCorrect ? (
+        {/* After any "real" or "practice" puzzle is solved, always show option to practice more */}
+        {((completed && !isPracticeMode) || isCorrect) && showPostCompletion ? (
           <div className="text-center space-y-4">
             <div className="w-16 h-16 bg-emerald-900/50 rounded-full flex items-center justify-center mx-auto border border-emerald-700">
               <CheckCircle className="w-8 h-8 text-emerald-400" />
@@ -241,16 +253,22 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
               <p className="text-slate-300 mb-4">
                 {isPracticeMode 
                   ? 'Great practice! Try another one to earn more points.' 
-                  : 'Great job! You can now open today\'s surprise box to discover something amazing.'
-                }
+                  : 'Great job! You can now open today\'s surprise box to discover something amazing. Want more practice for extra points?'}
               </p>
-              {isPracticeMode && (
+              <Button
+                onClick={handleNextPractice}
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Practice More Challenges
+              </Button>
+              {!isPracticeMode && (
                 <Button
-                  onClick={handleNextPractice}
-                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+                  variant="ghost"
+                  onClick={() => setShowPostCompletion(false)}
+                  className="text-xs text-slate-400 hover:text-slate-200 ml-2"
                 >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Next Practice
+                  Back to Today's Challenge
                 </Button>
               )}
             </div>
