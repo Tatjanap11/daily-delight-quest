@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Brain, Zap } from 'lucide-react';
 import { Puzzle } from './puzzleData';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface PuzzleHeaderProps {
   currentPuzzle: Puzzle;
@@ -56,20 +57,43 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
         {isPracticeMode ? Math.floor(currentPuzzle.points * 0.5) : currentPuzzle.points} points
       </Badge>
     </div>
-    {!isPracticeMode && !completed && (
+    {!isPracticeMode && (
       <div className="flex justify-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onStartPractice}
-          className="text-xs border-slate-600 text-slate-300 hover:bg-slate-700"
-        >
-          <Zap className="w-3 h-3 mr-1" />
-          Practice Mode
-        </Button>
+        {!completed ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onStartPractice}
+            className="text-xs border-slate-600 text-slate-300 hover:bg-slate-700"
+          >
+            <Zap className="w-3 h-3 mr-1" />
+            Practice Mode
+          </Button>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled
+                  className="text-xs border-slate-700 text-slate-400 opacity-60 pointer-events-none"
+                  style={{ cursor: "not-allowed" }}
+                >
+                  <Zap className="w-3 h-3 mr-1" />
+                  Practice Mode
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="bg-slate-800 border-slate-700 text-slate-200 max-w-xs">
+              When you solve the next daily challenge, more practice challenges will appear!
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
     )}
   </CardHeader>
 );
 
 export default PuzzleHeader;
+
