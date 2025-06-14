@@ -117,25 +117,25 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'science': return 'bg-blue-100 text-blue-700';
-      case 'psychology': return 'bg-purple-100 text-purple-700';
-      case 'culture': return 'bg-green-100 text-green-700';
-      case 'history': return 'bg-amber-100 text-amber-700';
-      case 'nature': return 'bg-emerald-100 text-emerald-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case 'science': return 'bg-blue-900/80 text-blue-200 border-blue-700';
+      case 'psychology': return 'bg-purple-900/80 text-purple-200 border-purple-700';
+      case 'culture': return 'bg-emerald-900/80 text-emerald-200 border-emerald-700';
+      case 'history': return 'bg-indigo-900/80 text-indigo-200 border-indigo-700';
+      case 'nature': return 'bg-teal-900/80 text-teal-200 border-teal-700';
+      default: return 'bg-slate-900/80 text-slate-200 border-slate-700';
     }
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
+    <Card className="bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl hover:shadow-2xl transition-all duration-300">
       <CardHeader className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Gift className="w-6 h-6 text-yellow-500" />
-          <CardTitle className="text-2xl bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+          <Gift className="w-6 h-6 text-cyan-400" />
+          <CardTitle className="text-2xl bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
             Daily Discovery Box
           </CardTitle>
         </div>
-        <p className="text-gray-600">
+        <p className="text-slate-300">
           {canOpen ? 'Your reward awaits!' : 'Complete today\'s puzzle to unlock'}
         </p>
       </CardHeader>
@@ -143,18 +143,18 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
       <CardContent className="space-y-6">
         {!canOpen ? (
           <div className="text-center space-y-4">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-              <Lock className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto border border-slate-600">
+              <Lock className="w-12 h-12 text-slate-400" />
             </div>
-            <p className="text-gray-500">
+            <p className="text-slate-400">
               Solve today's puzzle to unlock this surprise box and discover something amazing!
             </p>
           </div>
         ) : isOpened && currentFact ? (
           <div className="space-y-4 animate-fade-in">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-yellow-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyan-500">
+                <Sparkles className="w-8 h-8 text-cyan-200" />
               </div>
               <Badge className={getCategoryColor(currentFact.category)}>
                 {React.createElement(getCategoryIcon(currentFact.category), { className: "w-4 h-4 mr-1" })}
@@ -162,11 +162,11 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
               </Badge>
             </div>
 
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-6 border border-yellow-200">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">
+            <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg p-6 border border-slate-600">
+              <h3 className="text-xl font-bold text-slate-200 mb-3">
                 {currentFact.title}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-slate-300 leading-relaxed">
                 {currentFact.content}
               </p>
             </div>
@@ -178,13 +178,13 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
                     key={i}
                     className={`w-4 h-4 ${
                       i < Math.floor(currentFact.funLevel / 2) 
-                        ? 'text-yellow-400 fill-current' 
-                        : 'text-gray-300'
+                        ? 'text-cyan-400 fill-current' 
+                        : 'text-slate-500'
                     }`}
                   />
                 ))}
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-400">
                 Mind-blowing level: {currentFact.funLevel}/10
               </p>
             </div>
@@ -192,11 +192,11 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
         ) : (
           <div className="text-center space-y-4">
             <div 
-              className={`w-24 h-24 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full flex items-center justify-center mx-auto transition-all duration-1000 ${
+              className={`w-24 h-24 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-full flex items-center justify-center mx-auto transition-all duration-1000 border border-cyan-500 ${
                 isAnimating ? 'animate-bounce scale-110' : 'hover:scale-105'
               }`}
             >
-              <Gift className={`w-12 h-12 text-yellow-600 transition-all duration-500 ${
+              <Gift className={`w-12 h-12 text-cyan-200 transition-all duration-500 ${
                 isAnimating ? 'animate-spin' : ''
               }`} />
             </div>
@@ -204,7 +204,7 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
             <Button
               onClick={handleOpenBox}
               disabled={isAnimating}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {isAnimating ? (
                 <>
@@ -219,7 +219,7 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
               )}
             </Button>
             
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-400">
               Click to reveal today's fascinating discovery!
             </p>
           </div>
