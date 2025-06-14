@@ -25,7 +25,7 @@ const Index = () => {
   const { toast } = useToast();
 
   const pointsForNextLevel = userStats.level * 100;
-  const progressToNextLevel = (userStats.points % 100) / 100 * 100;
+  const progressToNextLevel = (userStats.points % pointsForNextLevel) / pointsForNextLevel * 100;
   const canLevelUp = userStats.points >= pointsForNextLevel;
 
   // Load user stats from localStorage
@@ -87,12 +87,14 @@ const Index = () => {
     setUserStats(newStats);
     setTodayCompleted(true);
     
-    // Mark today as completed
-    localStorage.setItem(`completed_${today}`, 'true');
+    // Mark today as completed (only for daily puzzles, not practice)
+    if (!localStorage.getItem(`completed_${today}`)) {
+      localStorage.setItem(`completed_${today}`, 'true');
+    }
 
     toast({
       title: "🎉 Amazing! You got it! 🌟",
-      description: `✨ You earned ${points} magical points! The surprise box is sparkling and ready! ✨`,
+      description: `✨ You earned ${points} magical points! ${points > 10 ? 'The surprise box is sparkling and ready!' : 'Keep practicing to earn more!'} ✨`,
       className: "bg-gradient-to-r from-emerald-800 to-green-800 border-emerald-600 shadow-xl text-emerald-200"
     });
   };
@@ -143,11 +145,11 @@ const Index = () => {
                   <div className="space-y-2">
                     <h4 className="font-semibold text-blue-400">How to Play:</h4>
                     <ul className="text-sm space-y-1">
-                      <li>• Solve daily puzzles to earn points</li>
-                      <li>• Open surprise boxes to discover amazing facts</li>
+                      <li>• Solve daily puzzles to earn points and unlock surprise boxes</li>
+                      <li>• Use Practice Mode to solve extra puzzles for more points</li>
                       <li>• Rate facts to get personalized content</li>
                       <li>• Maintain streaks by playing daily</li>
-                      <li>• Level up to unlock harder puzzles</li>
+                      <li>• Level up to unlock harder puzzles (need {pointsForNextLevel} points per level)</li>
                       <li>• Compete on the leaderboard</li>
                     </ul>
                   </div>
@@ -181,20 +183,24 @@ const Index = () => {
                   <div className="text-sm text-slate-400">
                     {userStats.boxesOpened} surprise boxes opened
                   </div>
-                  {canLevelUp && (
+                  {canLevelUp ? (
                     <Button 
                       onClick={handleLevelUp}
-                      className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold"
+                      className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold animate-pulse"
                     >
                       Level Up! <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
+                  ) : (
+                    <div className="text-sm text-slate-400">
+                      Need {pointsForNextLevel - userStats.points} more points to level up
+                    </div>
                   )}
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-slate-300">
                   <span>Progress to Level {userStats.level + 1}</span>
-                  <span>{Math.floor(progressToNextLevel)}%</span>
+                  <span>{Math.floor(progressToNextLevel)}% ({userStats.points}/{pointsForNextLevel})</span>
                 </div>
                 <Progress value={progressToNextLevel} className="h-2 bg-slate-700" />
               </div>
