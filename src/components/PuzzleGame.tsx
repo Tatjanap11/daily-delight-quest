@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -26,6 +25,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
   const [isPracticeMode, setIsPracticeMode] = useState(false);
   const [practiceCount, setPracticeCount] = useState(0);
   const [showPostCompletion, setShowPostCompletion] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   // Store today's practice count in localStorage and reset on new day
@@ -62,9 +62,12 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
 
   const canDoPractice = practiceCount < MAX_PRACTICE_PER_DAY;
 
-  const selectPuzzle = () => {
+  const selectPuzzle = async () => {
+    setLoading(true);
     if (isPracticeMode) {
-      setCurrentPuzzle(getRandomPracticePuzzle(userLevel));
+      // use async version for practice puzzles
+      const { puzzle } = await getRandomPracticePuzzle(userLevel);
+      setCurrentPuzzle(puzzle);
     } else {
       setCurrentPuzzle(getDailyPuzzle());
     }
@@ -72,6 +75,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     setShowHint(false);
     setAttempts(0);
     setIsCorrect(false);
+    setLoading(false);
   };
 
   const handleSubmit = () => {
@@ -136,7 +140,17 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     setIsPracticeMode(true);
   };
 
-  if (!currentPuzzle) return null;
+  if (loading || !currentPuzzle) {
+    return (
+      <Card className="bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
+        <CardContent>
+          <div className="text-center text-blue-300 animate-pulse py-16">
+            Generating your challenge...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // For the daily puzzle, after it's completed, disable input/submit.
   const inputDisabled = completed && !isPracticeMode;
@@ -194,4 +208,3 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
 };
 
 export default PuzzleGame;
-
