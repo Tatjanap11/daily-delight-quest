@@ -36,7 +36,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     if (isPracticeMode) {
       setCurrentPuzzle(getRandomPracticePuzzle(userLevel));
     } else {
-      setCurrentPuzzle(getDailyPuzzle(userLevel));
+      setCurrentPuzzle(getDailyPuzzle());
     }
     setUserAnswer('');
     setShowHint(false);
