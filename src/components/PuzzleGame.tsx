@@ -98,17 +98,9 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
       onComplete(bonusPoints);
       
       toast({
-        title: (
-          <span className="text-lg font-bold text-emerald-300" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-            🎉 Amazing! You got it! 🌟
-          </span>
-        ),
-        description: (
-          <span className="text-emerald-200" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-            ✨ You earned {bonusPoints} magical points! The surprise box is sparkling and ready! ✨
-          </span>
-        ),
-        className: "bg-gradient-to-r from-emerald-800 to-green-800 border-emerald-600 shadow-xl"
+        title: "🎉 Amazing! You got it! 🌟",
+        description: `✨ You earned ${bonusPoints} magical points! The surprise box is sparkling and ready! ✨`,
+        className: "bg-gradient-to-r from-emerald-800 to-green-800 border-emerald-600 shadow-xl text-emerald-200"
       });
 
       // Save completion for today
@@ -117,17 +109,9 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     } else {
       setAttempts(prev => prev + 1);
       toast({
-        title: (
-          <span className="text-lg font-bold text-pink-300" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-            🤔 Oopsie! Not quite there yet! 💭
-          </span>
-        ),
-        description: (
-          <span className="text-pink-200" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-            🌈 Don't worry! Every great mind needs time to think. You've got this! 💪
-          </span>
-        ),
-        className: "bg-gradient-to-r from-pink-800 to-purple-800 border-pink-600 shadow-xl"
+        title: "🤔 Oopsie! Not quite there yet! 💭",
+        description: "🌈 Don't worry! Every great mind needs time to think. You've got this! 💪",
+        className: "bg-gradient-to-r from-pink-800 to-purple-800 border-pink-600 shadow-xl text-pink-200"
       });
     }
   };
