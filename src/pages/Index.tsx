@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -62,53 +61,53 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-            Daily Discoveries
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+            Daily WonderBox
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-blue-200 text-lg">
             Solve puzzles, unlock fascinating facts, and expand your mind daily!
           </p>
         </div>
 
         {/* User Stats Bar */}
-        <Card className="mb-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="mb-8 bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
-                  <span className="font-semibold">Level {userStats.level}</span>
+                  <Trophy className="w-5 h-5 text-yellow-400" />
+                  <span className="font-semibold text-slate-200">Level {userStats.level}</span>
                 </div>
-                <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                <Badge variant="secondary" className="bg-blue-900/50 text-blue-300 border-blue-700">
                   <Star className="w-4 h-4 mr-1" />
                   {userStats.points} points
                 </Badge>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                <Badge variant="secondary" className="bg-cyan-900/50 text-cyan-300 border-cyan-700">
                   <Zap className="w-4 h-4 mr-1" />
                   {userStats.streak} streak
                 </Badge>
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-slate-400">
                 {userStats.boxesOpened} surprise boxes opened
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-sm text-slate-300">
                 <span>Progress to Level {userStats.level + 1}</span>
                 <span>{Math.floor(progressToNextLevel)}%</span>
               </div>
-              <Progress value={progressToNextLevel} className="h-2" />
+              <Progress value={progressToNextLevel} className="h-2 bg-slate-700" />
             </div>
           </CardContent>
         </Card>
 
         {/* Navigation */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-lg">
+          <div className="bg-slate-800/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-slate-700">
             <div className="flex gap-2">
               {[
                 { id: 'game', label: 'Today\'s Puzzle', icon: Brain },
@@ -121,8 +120,8 @@ const Index = () => {
                   onClick={() => setCurrentTab(id)}
                   className={`rounded-full transition-all duration-200 ${
                     currentTab === id 
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg' 
-                      : 'hover:bg-gray-100'
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg' 
+                      : 'hover:bg-slate-700 text-slate-300'
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />

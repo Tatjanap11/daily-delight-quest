@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -118,10 +117,10 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-100 text-green-700';
-      case 'medium': return 'bg-yellow-100 text-yellow-700';
-      case 'hard': return 'bg-red-100 text-red-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case 'easy': return 'bg-emerald-900/50 text-emerald-300 border-emerald-700';
+      case 'medium': return 'bg-amber-900/50 text-amber-300 border-amber-700';
+      case 'hard': return 'bg-red-900/50 text-red-300 border-red-700';
+      default: return 'bg-slate-700 text-slate-300 border-slate-600';
     }
   };
 
@@ -138,11 +137,11 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
   if (!currentPuzzle) return null;
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
+    <Card className="bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl hover:shadow-2xl transition-all duration-300">
       <CardHeader className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Brain className="w-6 h-6 text-purple-600" />
-          <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <Brain className="w-6 h-6 text-blue-400" />
+          <CardTitle className="text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             Today's Challenge
           </CardTitle>
         </div>
@@ -150,10 +149,10 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
           <Badge className={getDifficultyColor(currentPuzzle.difficulty)}>
             {currentPuzzle.difficulty.toUpperCase()}
           </Badge>
-          <Badge variant="outline">
+          <Badge variant="outline" className="border-slate-600 text-slate-300">
             {getTypeIcon(currentPuzzle.type)} {currentPuzzle.type.toUpperCase()}
           </Badge>
-          <Badge variant="secondary">
+          <Badge variant="secondary" className="bg-blue-900/50 text-blue-300 border-blue-700">
             {currentPuzzle.points} points
           </Badge>
         </div>
@@ -162,22 +161,22 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
       <CardContent className="space-y-6">
         {completed || isCorrect ? (
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-emerald-900/50 rounded-full flex items-center justify-center mx-auto border border-emerald-700">
+              <CheckCircle className="w-8 h-8 text-emerald-400" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-green-700 mb-2">
+              <h3 className="text-xl font-semibold text-emerald-400 mb-2">
                 Puzzle Complete! 🎉
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-300">
                 Great job! You can now open today's surprise box to discover something amazing.
               </p>
             </div>
           </div>
         ) : (
           <>
-            <div className="bg-gray-50 rounded-lg p-6">
-              <p className="text-lg text-gray-800 leading-relaxed">
+            <div className="bg-slate-700/50 rounded-lg p-6 border border-slate-600">
+              <p className="text-lg text-slate-200 leading-relaxed">
                 {currentPuzzle.question}
               </p>
             </div>
@@ -189,12 +188,12 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
                   onChange={(e) => setUserAnswer(e.target.value)}
                   placeholder="Enter your answer..."
                   onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                  className="flex-1"
+                  className="flex-1 bg-slate-700 border-slate-600 text-slate-200 placeholder:text-slate-400"
                 />
                 <Button 
                   onClick={handleSubmit}
                   disabled={!userAnswer.trim()}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
                 >
                   Submit
                 </Button>
@@ -204,13 +203,13 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
                 <Button
                   variant="outline"
                   onClick={() => setShowHint(!showHint)}
-                  className="text-sm"
+                  className="text-sm border-slate-600 text-slate-300 hover:bg-slate-700"
                 >
                   <Lightbulb className="w-4 h-4 mr-2" />
                   {showHint ? 'Hide' : 'Show'} Hint
                 </Button>
                 {attempts > 0 && (
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
                     <AlertCircle className="w-4 h-4" />
                     {attempts} attempt{attempts !== 1 ? 's' : ''}
                   </div>
@@ -218,12 +217,12 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
               </div>
 
               {showHint && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4">
                   <div className="flex items-start gap-2">
-                    <Lightbulb className="w-5 h-5 text-blue-500 mt-0.5" />
+                    <Lightbulb className="w-5 h-5 text-blue-400 mt-0.5" />
                     <div>
-                      <p className="font-medium text-blue-800 mb-1">Hint:</p>
-                      <p className="text-blue-700">{currentPuzzle.hint}</p>
+                      <p className="font-medium text-blue-300 mb-1">Hint:</p>
+                      <p className="text-blue-200">{currentPuzzle.hint}</p>
                     </div>
                   </div>
                 </div>
