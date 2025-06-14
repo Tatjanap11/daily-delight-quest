@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import DailyStatsBar from '@/components/DailyStatsBar';
 import Leaderboard from '@/components/Leaderboard';
 import UserStats from '@/components/UserStats';
 import { useToast } from '@/hooks/use-toast';
+import { Brain, Star, Trophy } from 'lucide-react';
 
 const Index = () => {
   const [currentTab, setCurrentTab] = useState('game');
@@ -171,9 +171,9 @@ const Index = () => {
             <div className="bg-slate-800/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-slate-700">
               <div className="flex gap-2">
                 {[
-                  { id: 'game', label: "Today's Puzzle", icon: require('lucide-react').Brain },
-                  { id: 'stats', label: 'My Progress', icon: require('lucide-react').Star },
-                  { id: 'leaderboard', label: 'Leaderboard', icon: require('lucide-react').Trophy }
+                  { id: 'game', label: "Today's Puzzle", icon: Brain },
+                  { id: 'stats', label: 'My Progress', icon: Star },
+                  { id: 'leaderboard', label: 'Leaderboard', icon: Trophy }
                 ].map(({ id, label, icon: Icon }) => (
                   <Button
                     key={id}
