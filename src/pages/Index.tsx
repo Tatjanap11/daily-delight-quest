@@ -1,12 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Trophy, Star, Brain, Gift, Zap, HelpCircle, ArrowRight } from 'lucide-react';
-import PuzzleGame from '@/components/PuzzleGame';
-import SurpriseBox from '@/components/SurpriseBox';
+import { Button } from '@/components/ui/button';
+import { HelpCircle } from 'lucide-react';
+import GameAndBoxPanel from '@/components/GameAndBoxPanel';
+import DailyStatsBar from '@/components/DailyStatsBar';
 import Leaderboard from '@/components/Leaderboard';
 import UserStats from '@/components/UserStats';
 import { useToast } from '@/hooks/use-toast';
@@ -28,23 +26,18 @@ const Index = () => {
   const progressToNextLevel = (userStats.points % pointsForNextLevel) / pointsForNextLevel * 100;
   const canLevelUp = userStats.points >= pointsForNextLevel;
 
-  // Load user stats from localStorage
   useEffect(() => {
     const savedStats = localStorage.getItem('userStats');
     if (savedStats) {
       const parsed = JSON.parse(savedStats);
-      console.log('Loaded user stats:', parsed);
       setUserStats(parsed);
     }
   }, []);
 
-  // Save user stats to localStorage whenever they change
   useEffect(() => {
-    console.log('Saving user stats:', userStats);
     localStorage.setItem('userStats', JSON.stringify(userStats));
   }, [userStats]);
 
-  // Check daily streak and completion status
   useEffect(() => {
     const today = new Date().toDateString();
     const lastPlayDate = localStorage.getItem('lastPlayDate');
@@ -66,21 +59,17 @@ const Index = () => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayStr = yesterday.toDateString();
-        
+
         setUserStats(prev => {
           const newStreak = lastPlayDate === yesterdayStr ? prev.streak + 1 : 1;
-          console.log('Updating streak:', newStreak);
           return { ...prev, streak: newStreak };
         });
-        
         localStorage.setItem('lastPlayDate', today);
       }
     }
   }, []);
 
   const handlePuzzleComplete = (points: number) => {
-    console.log('Puzzle completed with points:', points);
-    
     const today = new Date().toDateString();
     const newStats = {
       ...userStats,
@@ -88,11 +77,9 @@ const Index = () => {
       totalCorrectAnswers: userStats.totalCorrectAnswers + 1,
     };
 
-    console.log('New stats after puzzle completion:', newStats);
-    
     setUserStats(newStats);
     setTodayCompleted(true);
-    
+
     // Mark today as completed (only for daily puzzles, not practice)
     if (!localStorage.getItem(`completed_${today}`)) {
       localStorage.setItem(`completed_${today}`, 'true');
@@ -119,15 +106,13 @@ const Index = () => {
         level: userStats.level + 1,
         points: userStats.points - pointsForNextLevel
       };
-      
-      console.log('Leveling up:', newStats);
       setUserStats(newStats);
-      
+
       // Lock practice mode for today
       const today = new Date().toDateString();
       setPracticeModeLocked(true);
       localStorage.setItem('practiceModeLockedDate', today);
-      
+
       toast({
         title: "🎉 Level Up!",
         description: `Congratulations! You've reached level ${newStats.level}! New challenges await!`,
@@ -173,59 +158,22 @@ const Index = () => {
           </div>
 
           {/* User Stats Bar */}
-          <Card className="mb-8 bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-yellow-400" />
-                    <span className="font-semibold text-slate-200">Level {userStats.level}</span>
-                  </div>
-                  <Badge variant="secondary" className="bg-blue-900/50 text-blue-300 border-blue-700">
-                    <Star className="w-4 h-4 mr-1" />
-                    {userStats.points} points
-                  </Badge>
-                  <Badge variant="secondary" className="bg-cyan-900/50 text-cyan-300 border-cyan-700">
-                    <Zap className="w-4 h-4 mr-1" />
-                    {userStats.streak} streak
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-sm text-slate-400">
-                    {userStats.boxesOpened} surprise boxes opened
-                  </div>
-                  {canLevelUp ? (
-                    <Button 
-                      onClick={handleLevelUp}
-                      className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold animate-pulse"
-                    >
-                      Level Up! <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  ) : (
-                    <div className="text-sm text-slate-400">
-                      Need {pointsForNextLevel - userStats.points} more points to level up
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm text-slate-300">
-                  <span>Progress to Level {userStats.level + 1}</span>
-                  <span>{Math.floor(progressToNextLevel)}% ({userStats.points}/{pointsForNextLevel})</span>
-                </div>
-                <Progress value={progressToNextLevel} className="h-2 bg-slate-700" />
-              </div>
-            </CardContent>
-          </Card>
+          <DailyStatsBar
+            userStats={userStats}
+            pointsForNextLevel={pointsForNextLevel}
+            progressToNextLevel={progressToNextLevel}
+            canLevelUp={canLevelUp}
+            onLevelUp={handleLevelUp}
+          />
 
           {/* Navigation */}
           <div className="flex justify-center mb-8">
             <div className="bg-slate-800/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-slate-700">
               <div className="flex gap-2">
                 {[
-                  { id: 'game', label: 'Today\'s Puzzle', icon: Brain },
-                  { id: 'stats', label: 'My Progress', icon: Star },
-                  { id: 'leaderboard', label: 'Leaderboard', icon: Trophy }
+                  { id: 'game', label: "Today's Puzzle", icon: require('lucide-react').Brain },
+                  { id: 'stats', label: 'My Progress', icon: require('lucide-react').Star },
+                  { id: 'leaderboard', label: 'Leaderboard', icon: require('lucide-react').Trophy }
                 ].map(({ id, label, icon: Icon }) => (
                   <Button
                     key={id}
@@ -248,19 +196,13 @@ const Index = () => {
           {/* Content */}
           <div className="space-y-8">
             {currentTab === 'game' && (
-              <div className="grid gap-8 lg:grid-cols-2">
-                <PuzzleGame
-                  onComplete={handlePuzzleComplete}
-                  completed={todayCompleted}
-                  userLevel={userStats.level}
-                  practiceModeLocked={practiceModeLocked}
-                />
-                <SurpriseBox
-                  canOpen={todayCompleted}
-                  onBoxOpened={handleBoxOpened}
-                  userLevel={userStats.level}
-                />
-              </div>
+              <GameAndBoxPanel
+                onPuzzleComplete={handlePuzzleComplete}
+                puzzleCompleted={todayCompleted}
+                userLevel={userStats.level}
+                onBoxOpened={handleBoxOpened}
+                practiceModeLocked={practiceModeLocked}
+              />
             )}
 
             {currentTab === 'stats' && (

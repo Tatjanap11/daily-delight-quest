@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -81,7 +80,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
               You’ve leveled up! New practice challenges will appear after your next daily challenge.
             </TooltipContent>
           </Tooltip>
-        ) : !completed ? (
+        ) : (
           <Button
             variant="outline"
             size="sm"
@@ -91,26 +90,6 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
             <Zap className="w-3 h-3 mr-1" />
             Practice Mode
           </Button>
-        ) : (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled
-                  className="text-xs border-slate-700 text-slate-400 opacity-60 pointer-events-none"
-                  style={{ cursor: "not-allowed" }}
-                >
-                  <Zap className="w-3 h-3 mr-1" />
-                  Practice Mode
-                </Button>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent className="bg-slate-800 border-slate-700 text-slate-200 max-w-xs">
-              When you solve the next daily challenge, more practice challenges will appear!
-            </TooltipContent>
-          </Tooltip>
         )}
       </div>
     )}

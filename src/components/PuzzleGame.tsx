@@ -91,7 +91,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
         isPracticeMode={isPracticeMode}
         completed={completed}
         onStartPractice={() => setIsPracticeMode(true)}
-        practiceModeLocked={!!practiceModeLocked}
+        practiceModeLocked={practiceModeLocked}
       />
       <CardContent className="space-y-6">
         {((completed && !isPracticeMode) || isCorrect) && showPostCompletion ? (
