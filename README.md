@@ -1,8 +1,48 @@
+
 # Welcome to your Lovable project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/914a9ca8-7b40-4a2b-ab6e-22de3de7cb50
+
+## Project Structure
+
+```
+.
+├── README.md
+├── src
+│   ├── components
+│   │   ├── Leaderboard.tsx
+│   │   ├── PuzzleCompletion.tsx
+│   │   ├── PuzzleGame.tsx
+│   │   ├── PuzzleHeader.tsx
+│   │   ├── PuzzleInput.tsx
+│   │   ├── SurpriseBox.tsx
+│   │   ├── UserStats.tsx
+│   │   ├── puzzleData.ts
+│   │   ├── ui
+│   │   │   └── ... (shadcn/ui component files)
+│   ├── hooks
+│   │   ├── use-mobile.tsx
+│   │   ├── use-toast.ts
+│   ├── pages
+│   │   ├── Index.tsx
+│   │   ├── NotFound.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── tailwind.config.ts
+├── vite.config.ts
+├── package.json
+├── tsconfig.json
+└── ... (other config and lock files)
+```
+
+- Most core app logic is under `src/components/`
+- Page entrypoints are in `src/pages/`
+- UI components from shadcn/ui are under `src/components/ui/`
+- Custom hooks are in `src/hooks/`
+- Tailwind and Vite config files are in the project root
 
 ## How can I edit this code?
 
@@ -71,3 +111,4 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
