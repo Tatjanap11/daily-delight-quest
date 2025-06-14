@@ -12,6 +12,7 @@ interface PuzzleHeaderProps {
   isPracticeMode: boolean;
   completed: boolean;
   onStartPractice: () => void;
+  practiceModeLocked?: boolean; // new prop
 }
 
 const getDifficultyColor = (difficulty: string) => {
@@ -38,6 +39,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
   isPracticeMode,
   completed,
   onStartPractice,
+  practiceModeLocked
 }) => (
   <CardHeader className="text-center">
     <div className="flex items-center justify-center gap-2 mb-2">
@@ -59,7 +61,27 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
     </div>
     {!isPracticeMode && (
       <div className="flex justify-center">
-        {!completed ? (
+        {practiceModeLocked ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled
+                  className="text-xs border-slate-700 text-slate-400 opacity-60 pointer-events-none"
+                  style={{ cursor: "not-allowed" }}
+                >
+                  <Zap className="w-3 h-3 mr-1" />
+                  Practice Mode
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="bg-slate-800 border-slate-700 text-slate-200 max-w-xs">
+              You’ve leveled up! New practice challenges will appear after your next daily challenge.
+            </TooltipContent>
+          </Tooltip>
+        ) : !completed ? (
           <Button
             variant="outline"
             size="sm"
@@ -96,4 +118,3 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
 );
 
 export default PuzzleHeader;
-

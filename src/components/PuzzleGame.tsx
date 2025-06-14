@@ -11,9 +11,10 @@ interface PuzzleGameProps {
   onComplete: (points: number) => void;
   completed: boolean;
   userLevel: number;
+  practiceModeLocked?: boolean; // new prop, optional for backward compatibility
 }
 
-const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLevel }) => {
+const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLevel, practiceModeLocked }) => {
   const [currentPuzzle, setCurrentPuzzle] = useState<Puzzle | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
   const [showHint, setShowHint] = useState(false);
@@ -90,6 +91,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
         isPracticeMode={isPracticeMode}
         completed={completed}
         onStartPractice={() => setIsPracticeMode(true)}
+        practiceModeLocked={!!practiceModeLocked}
       />
       <CardContent className="space-y-6">
         {((completed && !isPracticeMode) || isCorrect) && showPostCompletion ? (

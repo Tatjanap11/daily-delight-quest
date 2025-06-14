@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,7 @@ const Index = () => {
     totalCorrectAnswers: 0
   });
   const [todayCompleted, setTodayCompleted] = useState(false);
+  const [practiceModeLocked, setPracticeModeLocked] = useState(false);
   const { toast } = useToast();
 
   const pointsForNextLevel = userStats.level * 100;
@@ -49,10 +49,16 @@ const Index = () => {
     const today = new Date().toDateString();
     const lastPlayDate = localStorage.getItem('lastPlayDate');
     const completedToday = localStorage.getItem(`completed_${today}`);
-    
-    console.log('Today:', today, 'Last play date:', lastPlayDate, 'Completed today:', !!completedToday);
-    
+
     setTodayCompleted(!!completedToday);
+
+    // If a new day, unlock practice mode
+    if (localStorage.getItem('practiceModeLockedDate') !== today) {
+      setPracticeModeLocked(false);
+      localStorage.removeItem('practiceModeLockedDate');
+    } else if (localStorage.getItem('practiceModeLockedDate') === today) {
+      setPracticeModeLocked(true);
+    }
 
     // Handle streak logic only if puzzle was completed today
     if (completedToday) {
@@ -116,6 +122,11 @@ const Index = () => {
       
       console.log('Leveling up:', newStats);
       setUserStats(newStats);
+      
+      // Lock practice mode for today
+      const today = new Date().toDateString();
+      setPracticeModeLocked(true);
+      localStorage.setItem('practiceModeLockedDate', today);
       
       toast({
         title: "🎉 Level Up!",
@@ -242,6 +253,7 @@ const Index = () => {
                   onComplete={handlePuzzleComplete}
                   completed={todayCompleted}
                   userLevel={userStats.level}
+                  practiceModeLocked={practiceModeLocked}
                 />
                 <SurpriseBox
                   canOpen={todayCompleted}
