@@ -32,40 +32,49 @@ const Index = () => {
   useEffect(() => {
     const savedStats = localStorage.getItem('userStats');
     if (savedStats) {
-      setUserStats(JSON.parse(savedStats));
+      const parsed = JSON.parse(savedStats);
+      console.log('Loaded user stats:', parsed);
+      setUserStats(parsed);
     }
   }, []);
 
   // Save user stats to localStorage whenever they change
   useEffect(() => {
+    console.log('Saving user stats:', userStats);
     localStorage.setItem('userStats', JSON.stringify(userStats));
   }, [userStats]);
 
-  // Check daily streak
+  // Check daily streak and completion status
   useEffect(() => {
     const today = new Date().toDateString();
     const lastPlayDate = localStorage.getItem('lastPlayDate');
     const completedToday = localStorage.getItem(`completed_${today}`);
     
+    console.log('Today:', today, 'Last play date:', lastPlayDate, 'Completed today:', !!completedToday);
+    
     setTodayCompleted(!!completedToday);
 
-    if (completedToday && lastPlayDate !== today) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      if (lastPlayDate === yesterday.toDateString()) {
-        // Continue streak
-        setUserStats(prev => ({ ...prev, streak: prev.streak + 1 }));
-      } else if (lastPlayDate && lastPlayDate !== today) {
-        // Reset streak if missed a day
-        setUserStats(prev => ({ ...prev, streak: 1 }));
+    // Handle streak logic only if puzzle was completed today
+    if (completedToday) {
+      if (lastPlayDate !== today) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toDateString();
+        
+        setUserStats(prev => {
+          const newStreak = lastPlayDate === yesterdayStr ? prev.streak + 1 : 1;
+          console.log('Updating streak:', newStreak);
+          return { ...prev, streak: newStreak };
+        });
+        
+        localStorage.setItem('lastPlayDate', today);
       }
-      
-      localStorage.setItem('lastPlayDate', today);
     }
   }, []);
 
   const handlePuzzleComplete = (points: number) => {
+    console.log('Puzzle completed with points:', points);
+    
     const today = new Date().toDateString();
     const newStats = {
       ...userStats,
@@ -73,8 +82,12 @@ const Index = () => {
       totalCorrectAnswers: userStats.totalCorrectAnswers + 1,
     };
 
+    console.log('New stats after puzzle completion:', newStats);
+    
     setUserStats(newStats);
     setTodayCompleted(true);
+    
+    // Mark today as completed
     localStorage.setItem(`completed_${today}`, 'true');
 
     toast({
@@ -99,6 +112,7 @@ const Index = () => {
         points: userStats.points - pointsForNextLevel
       };
       
+      console.log('Leveling up:', newStats);
       setUserStats(newStats);
       
       toast({

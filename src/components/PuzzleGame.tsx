@@ -95,17 +95,11 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     if (normalizedAnswer === correctAnswer) {
       setIsCorrect(true);
       const bonusPoints = Math.max(0, currentPuzzle.points - (attempts * 5));
-      onComplete(bonusPoints);
       
-      toast({
-        title: "🎉 Amazing! You got it! 🌟",
-        description: `✨ You earned ${bonusPoints} magical points! The surprise box is sparkling and ready! ✨`,
-        className: "bg-gradient-to-r from-emerald-800 to-green-800 border-emerald-600 shadow-xl text-emerald-200"
-      });
-
-      // Save completion for today
-      const today = new Date().toDateString();
-      localStorage.setItem(`completed_${today}`, 'true');
+      console.log('Puzzle solved! Awarding points:', bonusPoints);
+      
+      // Call the parent component's onComplete function
+      onComplete(bonusPoints);
     } else {
       setAttempts(prev => prev + 1);
       toast({
