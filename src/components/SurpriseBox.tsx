@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Gift, Lock, Sparkles, BookOpen, Brain, Globe } from 'lucide-react';
+import { Gift, Lock, Sparkles, BookOpen, Brain, Globe, Star } from 'lucide-react';
 
 interface SurpriseBoxProps {
   canOpen: boolean;
@@ -17,6 +17,13 @@ interface Fact {
   title: string;
   content: string;
   funLevel: number;
+}
+
+interface UserRating {
+  factId: string;
+  rating: number;
+  category: string;
+  timestamp: number;
 }
 
 const facts: Fact[] = [
@@ -75,18 +82,91 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
   const [isOpened, setIsOpened] = useState(false);
   const [currentFact, setCurrentFact] = useState<Fact | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [hasRated, setHasRated] = useState(false);
 
-  useEffect(() => {
-    // Select a fact based on the day and user level
+  const getUserPreferences = (): Record<string, number> => {
+    const ratings = JSON.parse(localStorage.getItem('user_fact_ratings') || '[]') as UserRating[];
+    const categoryScores: Record<string, { total: number; count: number }> = {};
+    
+    ratings.forEach(rating => {
+      if (!categoryScores[rating.category]) {
+        categoryScores[rating.category] = { total: 0, count: 0 };
+      }
+      categoryScores[rating.category].total += rating.rating;
+      categoryScores[rating.category].count += 1;
+    });
+
+    const preferences: Record<string, number> = {};
+    Object.keys(categoryScores).forEach(category => {
+      preferences[category] = categoryScores[category].total / categoryScores[category].count;
+    });
+
+    return preferences;
+  };
+
+  const selectFactBasedOnPreferences = (): Fact => {
+    const preferences = getUserPreferences();
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    const factIndex = (dayOfYear + userLevel * 2) % facts.length;
-    setCurrentFact(facts[factIndex]);
+    
+    // If user has no preferences yet, use default selection
+    if (Object.keys(preferences).length === 0) {
+      const factIndex = (dayOfYear + userLevel * 2) % facts.length;
+      return facts[factIndex];
+    }
 
-    // Check if today's box was already opened
-    const todayBoxKey = `box_opened_${today.toDateString()}`;
+    // Weight facts by user preferences
+    const weightedFacts = facts.map(fact => ({
+      ...fact,
+      weight: preferences[fact.category] || 2.5 // neutral weight for unrated categories
+    }));
+
+    // Sort by preference and use day/level as tiebreaker
+    weightedFacts.sort((a, b) => {
+      if (b.weight !== a.weight) return b.weight - a.weight;
+      return (dayOfYear + userLevel) % 2 === 0 ? 1 : -1;
+    });
+
+    // Return top preferred fact with some randomness
+    const topFacts = weightedFacts.slice(0, 3);
+    return topFacts[(dayOfYear + userLevel) % topFacts.length];
+  };
+
+  useEffect(() => {
+    setCurrentFact(selectFactBasedOnPreferences());
+
+    // Check if today's box was already opened and rated
+    const today = new Date().toDateString();
+    const todayBoxKey = `box_opened_${today}`;
+    const todayRatingKey = `fact_rated_${today}`;
+    
     setIsOpened(!!localStorage.getItem(todayBoxKey));
+    setHasRated(!!localStorage.getItem(todayRatingKey));
   }, [userLevel]);
+
+  const handleRating = (rating: number) => {
+    if (!currentFact || hasRated) return;
+
+    setUserRating(rating);
+    setHasRated(true);
+
+    // Save rating to localStorage
+    const ratings = JSON.parse(localStorage.getItem('user_fact_ratings') || '[]') as UserRating[];
+    const newRating: UserRating = {
+      factId: currentFact.id,
+      rating,
+      category: currentFact.category,
+      timestamp: Date.now()
+    };
+    
+    ratings.push(newRating);
+    localStorage.setItem('user_fact_ratings', JSON.stringify(ratings));
+
+    // Mark today as rated
+    const today = new Date().toDateString();
+    localStorage.setItem(`fact_rated_${today}`, 'true');
+  };
 
   const handleOpenBox = () => {
     if (!canOpen || isOpened || !currentFact) return;
@@ -187,6 +267,40 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
               <p className="text-sm text-slate-400">
                 Mind-blowing level: {currentFact.funLevel}/10
               </p>
+            </div>
+
+            {/* Rating System */}
+            <div className="bg-slate-700/50 rounded-lg p-4 space-y-3">
+              <h4 className="text-center text-slate-300 font-medium">
+                {hasRated ? 'Thanks for rating!' : 'How interesting was this fact?'}
+              </h4>
+              <div className="flex justify-center gap-2">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <Button
+                    key={rating}
+                    variant={hasRated && userRating === rating ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleRating(rating)}
+                    disabled={hasRated}
+                    className={`w-10 h-10 rounded-full transition-all duration-200 ${
+                      hasRated 
+                        ? userRating === rating
+                          ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
+                          : 'opacity-50 cursor-not-allowed'
+                        : 'hover:bg-slate-600 border-slate-500 text-slate-300'
+                    }`}
+                  >
+                    <Star className={`w-4 h-4 ${
+                      hasRated && userRating && rating <= userRating ? 'fill-current' : ''
+                    }`} />
+                  </Button>
+                ))}
+              </div>
+              {!hasRated && (
+                <p className="text-xs text-slate-400 text-center">
+                  Your rating helps us show you more facts you'll love!
+                </p>
+              )}
             </div>
           </div>
         ) : (
