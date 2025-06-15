@@ -65,7 +65,11 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
   const selectPuzzle = async () => {
     setLoading(true);
     if (isPracticeMode) {
-      // use async version for practice puzzles
+      if (practiceCount >= MAX_PRACTICE_PER_DAY) {
+        setCurrentPuzzle(null); // Don't show a new puzzle
+        setLoading(false);
+        return;
+      }
       const { puzzle } = await getRandomPracticePuzzle(userLevel);
       setCurrentPuzzle(puzzle);
     } else {
@@ -123,7 +127,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
       return;
     }
     setIsPracticeMode(true);
-    // Instead of incrementing here, we increment on correct answer
     setShowPostCompletion(false);
   };
 
@@ -140,7 +143,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
     setIsPracticeMode(true);
   };
 
-  if (loading || !currentPuzzle) {
+  if (loading || (!currentPuzzle && (!isPracticeMode || (isPracticeMode && practiceCount < MAX_PRACTICE_PER_DAY)))) {
     return (
       <Card className="bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
         <CardContent>
@@ -158,19 +161,29 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
   return (
     <Card className="bg-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl hover:shadow-2xl transition-all duration-300">
       <PuzzleHeader
-        currentPuzzle={currentPuzzle}
+        currentPuzzle={currentPuzzle || getDailyPuzzle()}
         isPracticeMode={isPracticeMode}
         completed={completed}
         onStartPractice={handleStartPractice}
         practiceModeLocked={practiceModeLocked || !canDoPractice}
       />
       <CardContent className="space-y-6">
-        {isPracticeMode && practiceCount >= MAX_PRACTICE_PER_DAY && (
-          <div className="bg-pink-900/60 text-pink-200 rounded-lg p-5 border border-pink-500 text-lg text-center font-semibold shadow-lg">
-            🚫 You have reached your practice problem limit for today. Come back tomorrow for more!
+        {isPracticeMode && practiceCount >= MAX_PRACTICE_PER_DAY ? (
+          // PATCH: Show limit message and just the exit button
+          <div className="flex flex-col gap-6">
+            <div className="bg-pink-900/60 text-pink-200 rounded-lg p-5 border border-pink-500 text-lg text-center font-semibold shadow-lg">
+              🚫 You have reached your practice problem limit for today. Come back tomorrow for more!
+            </div>
+            <div className="flex justify-center">
+              <button
+                onClick={() => setIsPracticeMode(false)}
+                className="bg-gradient-to-r from-blue-700 to-cyan-700 px-6 py-2 rounded text-lg text-white shadow hover:from-blue-800 hover:to-cyan-800 transition font-bold"
+              >
+                Exit to Today's Challenge
+              </button>
+            </div>
           </div>
-        )}
-        {((completed && !isPracticeMode) || isCorrect) && showPostCompletion ? (
+        ) : ((completed && !isPracticeMode) || isCorrect) && showPostCompletion ? (
           <PuzzleCompletion
             isPracticeMode={isPracticeMode}
             onPracticeMore={handleNextPractice}
@@ -180,7 +193,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
           <>
             <div className="bg-slate-700/50 rounded-lg p-6 border border-slate-600">
               <p className="text-lg text-slate-200 leading-relaxed">
-                {currentPuzzle.question}
+                {currentPuzzle?.question}
               </p>
             </div>
             <PuzzleInput
@@ -189,7 +202,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onComplete, completed, userLeve
               onSubmit={handleSubmit}
               showHint={showHint}
               setShowHint={setShowHint}
-              hint={currentPuzzle.hint}
+              hint={currentPuzzle?.hint || ""}
               attempts={attempts}
               disabled={inputDisabled || (isPracticeMode && practiceCount >= MAX_PRACTICE_PER_DAY)}
               isPracticeMode={isPracticeMode}
