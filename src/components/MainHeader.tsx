@@ -38,8 +38,11 @@ const MainHeader: React.FC<MainHeaderProps> = ({ pointsForNextLevel }) => (
     <p className="text-blue-200 text-lg">
       Solve puzzles, unlock fascinating facts, and expand your mind daily!
     </p>
+    <p className="mt-3 text-lg font-semibold text-cyan-300" data-testid="daily-challenge-headline">
+      {/* Explicitly brings back "Today's Daily Challenge" text */}
+      Today's Daily Challenge
+    </p>
   </div>
 );
 
 export default MainHeader;
-

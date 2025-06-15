@@ -17,6 +17,7 @@ const Index = () => {
   const [userStats, setUserStats] = useState({
     level: 1,
     points: 0,
+    // Store boxesOpened as daily array, not just a count
     boxesOpened: 0,
     streak: 0,
     totalCorrectAnswers: 0
@@ -30,10 +31,23 @@ const Index = () => {
   const canLevelUp = userStats.points >= pointsForNextLevel;
 
   useEffect(() => {
+    // Rehydrate boxesOpened per day array for flexibility
     const savedStats = localStorage.getItem('userStats');
+    let stats = userStats;
     if (savedStats) {
-      const parsed = JSON.parse(savedStats);
-      setUserStats(parsed);
+      stats = JSON.parse(savedStats);
+      setUserStats(stats);
+    }
+    // Count boxes opened after rehydration, fallback for legacy
+    const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date:string, count:number}]
+    const totalBoxesOpened = boxHistory.reduce((sum, d) => sum + (d.count || 1), 0);
+
+    // If userStats.boxesOpened doesn't match history, correct it
+    if (totalBoxesOpened !== stats.boxesOpened) {
+      setUserStats(prev => ({ ...prev, boxesOpened: totalBoxesOpened }));
+      // Also write back to localStorage
+      const mergedStats = { ...stats, boxesOpened: totalBoxesOpened };
+      localStorage.setItem('userStats', JSON.stringify(mergedStats));
     }
   }, []);
 
@@ -95,11 +109,24 @@ const Index = () => {
     });
   };
 
+  // Called from SurpriseBox when a box is opened
   const handleBoxOpened = () => {
-    setUserStats(prev => ({
-      ...prev,
-      boxesOpened: prev.boxesOpened + 1
-    }));
+    // Increment both the userStats count and a daily record
+    const today = new Date().toDateString();
+    let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date,count}]
+    const idx = boxHistory.findIndex((entry: any) => entry.date === today);
+    if (idx >= 0) {
+      boxHistory[idx].count += 1;
+    } else {
+      boxHistory.push({ date: today, count: 1 });
+    }
+    localStorage.setItem('boxHistory', JSON.stringify(boxHistory));
+    const total = boxHistory.reduce((sum: number, d: any) => sum + (d.count || 1), 0);
+    setUserStats(prev => ({ ...prev, boxesOpened: total }));
+
+    // Legacy: write back to userStats localStorage
+    const stats = { ...userStats, boxesOpened: total };
+    localStorage.setItem('userStats', JSON.stringify(stats));
   };
 
   const handleLevelUp = () => {
