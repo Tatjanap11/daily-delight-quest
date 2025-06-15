@@ -14,25 +14,20 @@ const RESET_KEYS = [
 export function checkAndUpgradeStorage() {
   try {
     const existingVersion = Number(localStorage.getItem(STORAGE_VERSION_KEY) || "0");
-    console.log("[storageVersion] existing version:", existingVersion, "Expected version:", STORAGE_VERSION);
     if (existingVersion < STORAGE_VERSION) {
       // Reset the relevant keys
       for (const key of RESET_KEYS) {
         localStorage.removeItem(key);
-        console.log("[storageVersion] Removing storage key:", key);
       }
       localStorage.setItem(STORAGE_VERSION_KEY, String(STORAGE_VERSION));
-      console.log("[storageVersion] Storage version updated, cleanup done.");
       // location.reload(); // Uncomment to force reload if desired
       return true; // indicates cleanup occurred
     } else if (!existingVersion || Number.isNaN(existingVersion)) {
       // No version detected, so set for the first time
       localStorage.setItem(STORAGE_VERSION_KEY, String(STORAGE_VERSION));
-      console.log("[storageVersion] Storage version initialized for the first time.");
     }
   } catch (e) {
     // Ignore - only affects advanced browsers
-    console.warn("Couldn't check or set storage version", e);
   }
   return false;
 }

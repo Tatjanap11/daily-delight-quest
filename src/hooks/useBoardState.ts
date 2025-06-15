@@ -3,12 +3,7 @@ import { useEffect, useState } from 'react';
 import { checkAndUpgradeStorage } from '../utils/storageVersion';
 
 export function useBoardState() {
-  useEffect(() => { 
-    const didUpgrade = checkAndUpgradeStorage();
-    if (didUpgrade) {
-      console.log("[BoardState] Storage migrated/upgraded on mount, clearing state.");
-    }
-  }, []);
+  useEffect(() => { checkAndUpgradeStorage(); }, []);
 
   const [currentTab, setCurrentTab] = useState('game');
   const [todayCompleted, setTodayCompleted] = useState(false);
@@ -20,26 +15,12 @@ export function useBoardState() {
     const completedToday = !!localStorage.getItem(`completed_${today}`);
     setTodayCompleted(completedToday);
 
-    let lockFlag = false;
-
     if (localStorage.getItem('practiceModeLockedDate') !== today) {
       setPracticeModeLocked(false);
       localStorage.removeItem('practiceModeLockedDate');
-      lockFlag = false;
     } else if (localStorage.getItem('practiceModeLockedDate') === today) {
       setPracticeModeLocked(true);
-      lockFlag = true;
     }
-
-    // Diagnostic logging
-    console.log("[BoardState] Refresh: today =", today,
-      "completedToday =", completedToday,
-      "practiceModeLocked =", lockFlag,
-      "localStorage keys", { 
-        completed: localStorage.getItem(`completed_${today}`),
-        practiceModeLockedDate: localStorage.getItem('practiceModeLockedDate')
-      }
-    );
   };
 
   useEffect(() => {
