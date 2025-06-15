@@ -11,6 +11,99 @@ export interface Puzzle {
 // 100 categorized puzzles (shortened here for brevity, but actual file will have 100 diverse, shuffled entries):
 
 export const puzzles: Puzzle[] = [
+  // Riddles: More obscure, rare
+  {
+    id: '201',
+    type: 'riddle',
+    question: "What ancient mechanism predicted eclipses, planetary positions, and Olympic Games, centuries before modern computers?",
+    answer: "antikythera mechanism",
+    hint: "It was discovered in a shipwreck near Greece.",
+    points: 60,
+    difficulty: 'hard'
+  },
+  {
+    id: '202',
+    type: 'history',
+    question: "Which South American empire recorded information on knotted strings but had no written language?",
+    answer: "inca",
+    hint: "Its central city was Machu Picchu.",
+    points: 40,
+    difficulty: 'medium'
+  },
+  {
+    id: '203',
+    type: 'science',
+    question: "What recent image, taken in 2019, confirmed Einstein's theory of relativity around a supermassive black hole?",
+    answer: "event horizon",
+    hint: "It was the first-ever photo of a cosmic entity.",
+    points: 50,
+    difficulty: 'hard'
+  },
+  {
+    id: '204',
+    type: 'logic',
+    question: "I can be cracked, made, told, and played. What am I?",
+    answer: "joke",
+    hint: "It's often funny but sometimes a riddle itself.",
+    points: 40,
+    difficulty: 'medium'
+  },
+  {
+    id: '205',
+    type: 'riddle',
+    question: "I'm named after a Roman god, but only visible at dawn or dusk. What am I?",
+    answer: "venus",
+    hint: "Known as the morning or evening star.",
+    points: 45,
+    difficulty: 'medium'
+  },
+  {
+    id: '206',
+    type: 'math',
+    question: "This sequence starts 1, 3, 6, 10, 15... Each is the sum of the previous and its index. Name it.",
+    answer: "triangular numbers",
+    hint: "It describes points that can form perfect equilateral triangles.",
+    points: 40,
+    difficulty: 'medium'
+  },
+  {
+    id: '207',
+    type: 'logic',
+    question: "A prisoner has two doors. One leads to freedom, but one to doom. A guard at each: one tells the truth, one always lies. What question ensures escape?",
+    answer: "which door would the other guard say leads to doom",
+    hint: "Classic logic puzzle, solution is to invert the answer.",
+    points: 70,
+    difficulty: 'hard'
+  },
+  // Science, obscure (recent discovery)
+  {
+    id: '208',
+    type: 'science',
+    question: "Which element was the last discovered on Earth and first created in a lab before found in Africa's uranium ores?",
+    answer: "rhenium",
+    hint: "Atomic number 75, rare, named after the Rhine river.",
+    points: 50,
+    difficulty: 'hard'
+  },
+  // ... keep a few easier, but only if unique ...
+  {
+    id: '21',
+    type: 'history',
+    question: "Which historical event saw thousands dance themselves into exhaustion in Strasbourg in 1518?",
+    answer: "dancing plague",
+    hint: "It's one of the weirdest unsolved mysteries of mass hysteria.",
+    points: 45,
+    difficulty: 'hard'
+  },
+  {
+    id: '22',
+    type: 'music',
+    question: "What instrument did physicist Albert Einstein often play to relax?",
+    answer: "violin",
+    hint: "Stringed and often used in orchestras.",
+    points: 40,
+    difficulty: 'medium'
+  },
   // Riddles
   {
     id: '1',

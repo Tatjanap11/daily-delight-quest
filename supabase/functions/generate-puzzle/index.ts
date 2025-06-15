@@ -1,7 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-// Categories to pick randomly from
 const categories = [
   "history", "science", "psychology", "music", "math", "logic", "word", "riddle"
 ];
@@ -21,9 +20,24 @@ serve(async (req) => {
     const levelNum = Math.max(1, Math.min(3, Math.floor((userLevel || 1) / 2) + 1));
     const difficulty = difficulties[levelNum - 1];
 
-    const model = "google/flan-t5-large"; // Question-generation model (change as desired)
-    const prompt = 
-      `Generate a ${difficulty} ${category} trivia or logic puzzle. Provide:\nQ: (question)\nA: (answer)\nHINT: (hint)\nThe answer must be one word/short phrase if possible.`;
+    const model = "google/flan-t5-large";
+
+    // **Enhanced prompt for novelty and obscurity**
+    const prompt =
+      `You are generating a UNIQUE, CHALLENGING, and RARE trivia or logic puzzle in the '${category}' category, at ${difficulty} level. 
+Instructions:
+- Make the puzzle about an obscure, rare, or recently discovered fact, event, or scientific principle.
+- Use knowledge that is surprising, little-known, or unusual, not found in everyday trivia books.
+- For science/history/psychology/music: prefer modern breakthroughs, paradoxes, or rare historical events, not typical school facts.
+- For riddle/logic/math: Make it non-obvious or require creative, clever reasoning.
+- Vary puzzle structure (not just Q:A!).
+- Provide:
+Q: (question)
+A: (short, concise, specific answer)
+HINT: (clever hint that nudges, without obviously giving it away)
+Answer must be precise and require some research or deep thinking.
+Format: "Q: ...\\nA: ...\\nHINT: ...".
+`;
 
     // Call Hugging Face proxy edge
     const hfResp = await fetch("https://vvpdemhsuufwogokpkzx.functions.supabase.co/hf-proxy", {
@@ -38,11 +52,11 @@ serve(async (req) => {
     const mA = /A:\s*([^\n]+)\n/.exec(text);
     const mH = /HINT:\s*([^\n]+)/.exec(text);
 
-    const question = mQ ? mQ[1].trim() : "AI generated puzzle";
+    const question = mQ ? mQ[1].trim() : "A rare AI generated puzzle";
     const answer = mA ? mA[1].trim() : "unknown";
-    const hint = mH ? mH[1].trim() : "Think hard!";
-    // Points: scale by difficulty (1: 15, 2: 30, 3: 50)
-    const points = levelNum === 1 ? 15 : levelNum === 2 ? 30 : 50;
+    const hint = mH ? mH[1].trim() : "Think differently!";
+    // Points: scale by difficulty (1: 20, 2: 40, 3: 70)
+    const points = levelNum === 1 ? 20 : levelNum === 2 ? 40 : 70;
 
     return new Response(JSON.stringify({
       question,
