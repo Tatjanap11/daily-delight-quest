@@ -1,10 +1,9 @@
-
 import React, { useEffect } from 'react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import MainHeader from '@/components/MainHeader';
 import MainTabs from '@/components/MainTabs';
 import MainNavbar from '@/components/MainNavbar';
-import GameAndBoxPanel from '@/components/GameAndBoxPanel';
+import GameAndBoxPanelEntry from "@/components/GameAndBoxPanelEntry";
 import DailyStatsBar from '@/components/DailyStatsBar';
 import Leaderboard from '@/components/Leaderboard';
 import UserStats from '@/components/UserStats';
@@ -98,7 +97,7 @@ const Index = () => {
           <MainTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
           <div className="space-y-8">
             {currentTab === 'game' && (
-              <GameAndBoxPanel
+              <GameAndBoxPanelEntry
                 onPuzzleComplete={handlePuzzleComplete}
                 puzzleCompleted={todayCompleted}
                 userLevel={userStats.level}
