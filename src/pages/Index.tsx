@@ -1,107 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
+
+import React, { useEffect } from 'react';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import MainHeader from '@/components/MainHeader';
+import MainTabs from '@/components/MainTabs';
+import MainNavbar from '@/components/MainNavbar';
 import GameAndBoxPanel from '@/components/GameAndBoxPanel';
 import DailyStatsBar from '@/components/DailyStatsBar';
 import Leaderboard from '@/components/Leaderboard';
 import UserStats from '@/components/UserStats';
 import { useToast } from '@/hooks/use-toast';
-import { Brain, Star, Trophy } from 'lucide-react';
-import MainHeader from "@/components/MainHeader";
-import MainTabs from "@/components/MainTabs";
-import MainNavbar from "@/components/MainNavbar";
+import { useUserStats } from '@/hooks/useUserStats';
+import { useBoardState } from '@/hooks/useBoardState';
 
 const Index = () => {
-  const [currentTab, setCurrentTab] = useState('game');
-  const [userStats, setUserStats] = useState({
-    level: 1,
-    points: 0,
-    // Store boxesOpened as daily array, not just a count
-    boxesOpened: 0,
-    streak: 0,
-    totalCorrectAnswers: 0
-  });
-  const [todayCompleted, setTodayCompleted] = useState(false);
-  const [practiceModeLocked, setPracticeModeLocked] = useState(false);
+  const { userStats, setUserStats, forceSyncBoxesOpened } = useUserStats();
+  const {
+    currentTab,
+    setCurrentTab,
+    todayCompleted,
+    setTodayCompleted,
+    practiceModeLocked,
+    setPracticeModeLocked,
+    forceRefresh,
+  } = useBoardState();
   const { toast } = useToast();
 
+  // Always compute and sync boxesOpened on mount, and when stats tab is visible
+  useEffect(() => { forceSyncBoxesOpened(); }, []);
+  useEffect(() => {
+    if (currentTab === 'stats') {
+      forceSyncBoxesOpened();
+    }
+  }, [currentTab, forceSyncBoxesOpened]);
+
+  // Level/points/daily stats util
   const pointsForNextLevel = userStats.level * 100;
-  const progressToNextLevel = (userStats.points % pointsForNextLevel) / pointsForNextLevel * 100;
+  const progressToNextLevel = ((userStats.points % pointsForNextLevel) / pointsForNextLevel) * 100;
   const canLevelUp = userStats.points >= pointsForNextLevel;
 
-  useEffect(() => {
-    // Rehydrate boxesOpened per day array for flexibility
-    const savedStats = localStorage.getItem('userStats');
-    let stats = userStats;
-    if (savedStats) {
-      stats = JSON.parse(savedStats);
-      setUserStats(stats);
-    }
-    // Count boxes opened after rehydration, fallback for legacy
-    const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date:string, count:number}]
-    const totalBoxesOpened = boxHistory.reduce((sum, d) => sum + (d.count || 1), 0);
-
-    // If userStats.boxesOpened doesn't match history, correct it
-    if (totalBoxesOpened !== stats.boxesOpened) {
-      setUserStats(prev => ({ ...prev, boxesOpened: totalBoxesOpened }));
-      // Also write back to localStorage
-      const mergedStats = { ...stats, boxesOpened: totalBoxesOpened };
-      localStorage.setItem('userStats', JSON.stringify(mergedStats));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('userStats', JSON.stringify(userStats));
-  }, [userStats]);
-
-  useEffect(() => {
-    const today = new Date().toDateString();
-    const lastPlayDate = localStorage.getItem('lastPlayDate');
-    const completedToday = localStorage.getItem(`completed_${today}`);
-
-    setTodayCompleted(!!completedToday);
-
-    // If a new day, unlock practice mode
-    if (localStorage.getItem('practiceModeLockedDate') !== today) {
-      setPracticeModeLocked(false);
-      localStorage.removeItem('practiceModeLockedDate');
-    } else if (localStorage.getItem('practiceModeLockedDate') === today) {
-      setPracticeModeLocked(true);
-    }
-
-    // Handle streak logic only if puzzle was completed today
-    if (completedToday) {
-      if (lastPlayDate !== today) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toDateString();
-
-        setUserStats(prev => {
-          const newStreak = lastPlayDate === yesterdayStr ? prev.streak + 1 : 1;
-          return { ...prev, streak: newStreak };
-        });
-        localStorage.setItem('lastPlayDate', today);
-      }
-    }
-  }, []);
-
+  // When puzzle completed
   const handlePuzzleComplete = (points: number) => {
     const today = new Date().toDateString();
-    const newStats = {
-      ...userStats,
-      points: userStats.points + points,
-      totalCorrectAnswers: userStats.totalCorrectAnswers + 1,
-    };
-
-    setUserStats(newStats);
+    setUserStats(prev => ({
+      ...prev,
+      points: prev.points + points,
+      totalCorrectAnswers: prev.totalCorrectAnswers + 1,
+    }));
     setTodayCompleted(true);
-
-    // Mark today as completed (only for daily puzzles, not practice)
-    if (!localStorage.getItem(`completed_${today}`)) {
-      localStorage.setItem(`completed_${today}`, 'true');
-    }
-
+    localStorage.setItem(`completed_${today}`, 'true');
     toast({
       title: "🎉 Amazing! You got it! 🌟",
       description: `✨ You earned ${points} magical points! ${points > 10 ? 'The surprise box is sparkling and ready!' : 'Keep practicing to earn more!'} ✨`,
@@ -109,46 +55,28 @@ const Index = () => {
     });
   };
 
-  // Called from SurpriseBox when a box is opened (daily or additional)
+  // When box opened (always sync latest history)
   const handleBoxOpened = () => {
-    // We'll count total boxes ever opened, not just 1 per day
     let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
     const today = new Date().toDateString();
-
-    // Instead of just one per day, count every opening
-    // We'll push an entry for each open, not aggregate by day
     boxHistory.push({ date: today, timestamp: Date.now() });
-
     localStorage.setItem('boxHistory', JSON.stringify(boxHistory));
-
-    // Count all box openings
-    const total = boxHistory.length;
-
-    setUserStats(prev => {
-      const nextStats = { ...prev, boxesOpened: total };
-      // Also write back to localStorage for persistence
-      localStorage.setItem('userStats', JSON.stringify(nextStats));
-      return nextStats;
-    });
+    forceSyncBoxesOpened();
   };
 
   const handleLevelUp = () => {
     if (canLevelUp) {
-      const newStats = {
-        ...userStats,
-        level: userStats.level + 1,
-        points: userStats.points - pointsForNextLevel
-      };
-      setUserStats(newStats);
-
-      // Lock practice mode for today
-      const today = new Date().toDateString();
+      setUserStats(prev => ({
+        ...prev,
+        level: prev.level + 1,
+        points: prev.points - pointsForNextLevel,
+      }));
       setPracticeModeLocked(true);
+      const today = new Date().toDateString();
       localStorage.setItem('practiceModeLockedDate', today);
-
       toast({
         title: "🎉 Level Up!",
-        description: `Congratulations! You've reached level ${newStats.level}! New challenges await!`,
+        description: `Congratulations! You've reached level ${userStats.level + 1}! New challenges await!`,
         className: "bg-gradient-to-r from-yellow-800 to-orange-800 border-yellow-600 shadow-xl text-yellow-200"
       });
     }
