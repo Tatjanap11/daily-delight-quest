@@ -202,7 +202,7 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
       console.log("SurpriseBox picked (prefs)", { chosen: fact, topFacts });
     }
 
-    // Fallback if no fact found
+    // Fallback if no fact found (additional defensiveness):
     if (!fact) {
       const fallbackPick = fallbackFacts[(dayOfYear + userLevel) % fallbackFacts.length];
       console.log("SurpriseBox fallbackFact used", { fallbackPick });
@@ -288,18 +288,23 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
   };
 
   const handleOpenBox = () => {
-    if (!canOpen || isOpened || !currentFact) return;
-
+    if (!canOpen || isOpened) return;
     setIsAnimating(true);
-    
     setTimeout(() => {
       setIsOpened(true);
       setIsAnimating(false);
       onBoxOpened();
-      
       // Save that today's box was opened
       const today = new Date().toDateString();
       localStorage.setItem(`box_opened_${today}`, 'true');
+      // Defensive: if fact is STILL null, re-pick:
+      if (!currentFact) {
+        const fallbackFact = selectFactBasedOnPreferences();
+        setCurrentFact(fallbackFact);
+        console.error("SurpriseBox: No fact found at open, forced fallback.", { fallbackFact });
+      } else {
+        console.log("SurpriseBox: Box opened with currentFact", { currentFact });
+      }
     }, 1000);
   };
 
@@ -374,8 +379,11 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
           <div className="text-center space-y-6 text-red-400">
             <div className="text-2xl font-bold">😅 Oops! Discovery not found.</div>
             <div>
-              We're having trouble fetching your fun fact. <br />
-              <span className="text-slate-400">Please refresh the page or check the developer console for more info.</span>
+              Something went wrong loading your discovery.<br/>
+              <span className="text-slate-400">
+                Try refreshing the page.<br/>
+                <strong>This should never happen! Please contact support if you keep seeing this.</strong>
+              </span>
             </div>
           </div>
         ) : isOpened && currentFact ? (
