@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
@@ -29,14 +29,30 @@ const Index = () => {
   const progressToNextLevel = (userStats.points % pointsForNextLevel) / pointsForNextLevel * 100;
   const canLevelUp = userStats.points >= pointsForNextLevel;
 
+  // Utility to sync boxesOpened from boxHistory
+  const syncBoxesOpenedFromStorage = React.useCallback(() => {
+    const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
+    const totalBoxesOpened = boxHistory.length;
+    setUserStats((prev) => {
+      if (prev.boxesOpened !== totalBoxesOpened) {
+        const nextStats = { ...prev, boxesOpened: totalBoxesOpened };
+        localStorage.setItem('userStats', JSON.stringify(nextStats));
+        return nextStats;
+      }
+      return prev;
+    });
+  }, []);
+
   useEffect(() => {
-    // Rehydrate boxesOpened per day array for flexibility
+    // Rehydrate userStats on mount
     const savedStats = localStorage.getItem('userStats');
     let stats = userStats;
     if (savedStats) {
       stats = JSON.parse(savedStats);
       setUserStats(stats);
     }
+
+    syncBoxesOpenedFromStorage();
     // Count boxes opened after rehydration, fallback for legacy
     const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date:string, count:number}]
     const totalBoxesOpened = boxHistory.reduce((sum, d) => sum + (d.count || 1), 0);
@@ -55,6 +71,7 @@ const Index = () => {
   }, [userStats]);
 
   useEffect(() => {
+    // Handle todayCompleted, streak, practiceModeLocked logic
     const today = new Date().toDateString();
     const lastPlayDate = localStorage.getItem('lastPlayDate');
     const completedToday = localStorage.getItem(`completed_${today}`);
@@ -85,28 +102,23 @@ const Index = () => {
     }
   }, []);
 
-  // This effect always syncs boxesOpened to localStorage boxHistory length
+  // Always sync boxesOpened when boxHistory changes (across tabs/windows)
   useEffect(() => {
-    function syncBoxesOpenedFromStorage() {
-      const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
-      const totalBoxesOpened = boxHistory.length;
-      setUserStats((prev) => ({ ...prev, boxesOpened: totalBoxesOpened }));
-    }
-
-    // On mount, sync once
-    syncBoxesOpenedFromStorage();
-
-    // On storage event (multi-tab), sync when boxHistory changes
     function onStorage(e: StorageEvent) {
       if (e.key === 'boxHistory') {
         syncBoxesOpenedFromStorage();
       }
     }
     window.addEventListener('storage', onStorage);
-    return () => {
-      window.removeEventListener('storage', onStorage);
-    };
-  }, []);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [syncBoxesOpenedFromStorage]);
+
+  // Whenever currentTab becomes "stats", force sync boxesOpened
+  useEffect(() => {
+    if (currentTab === 'stats') {
+      syncBoxesOpenedFromStorage();
+    }
+  }, [currentTab, syncBoxesOpenedFromStorage]);
 
   const handlePuzzleComplete = (points: number) => {
     const today = new Date().toDateString();
@@ -136,15 +148,9 @@ const Index = () => {
     let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
     const today = new Date().toDateString();
     boxHistory.push({ date: today, timestamp: Date.now() });
-
     localStorage.setItem('boxHistory', JSON.stringify(boxHistory));
-    // Always recompute boxesOpened from latest boxHistory
-    const total = boxHistory.length;
-    setUserStats((prev) => {
-      const nextStats = { ...prev, boxesOpened: total };
-      localStorage.setItem('userStats', JSON.stringify(nextStats));
-      return nextStats;
-    });
+    // Always recompute boxesOpened from the latest boxHistory
+    syncBoxesOpenedFromStorage();
   };
 
   const handleLevelUp = () => {
