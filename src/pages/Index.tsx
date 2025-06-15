@@ -109,27 +109,24 @@ const Index = () => {
     });
   };
 
-  // Called from SurpriseBox when a box is opened (daily or additional)
+  // Called from SurpriseBox when a box is opened
   const handleBoxOpened = () => {
-    // We'll count total boxes ever opened, not just 1 per day
-    let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
+    // Increment both the userStats count and a daily record
     const today = new Date().toDateString();
-
-    // Instead of just one per day, count every opening
-    // We'll push an entry for each open, not aggregate by day
-    boxHistory.push({ date: today, timestamp: Date.now() });
-
+    let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date,count}]
+    const idx = boxHistory.findIndex((entry: any) => entry.date === today);
+    if (idx >= 0) {
+      boxHistory[idx].count += 1;
+    } else {
+      boxHistory.push({ date: today, count: 1 });
+    }
     localStorage.setItem('boxHistory', JSON.stringify(boxHistory));
+    const total = boxHistory.reduce((sum: number, d: any) => sum + (d.count || 1), 0);
+    setUserStats(prev => ({ ...prev, boxesOpened: total }));
 
-    // Count all box openings
-    const total = boxHistory.length;
-
-    setUserStats(prev => {
-      const nextStats = { ...prev, boxesOpened: total };
-      // Also write back to localStorage for persistence
-      localStorage.setItem('userStats', JSON.stringify(nextStats));
-      return nextStats;
-    });
+    // Legacy: write back to userStats localStorage
+    const stats = { ...userStats, boxesOpened: total };
+    localStorage.setItem('userStats', JSON.stringify(stats));
   };
 
   const handleLevelUp = () => {

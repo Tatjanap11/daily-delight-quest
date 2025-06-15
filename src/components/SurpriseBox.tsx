@@ -111,77 +111,7 @@ const facts: Fact[] = [
     content: 'The Pirahã people of the Amazon don\'t just lack words for exact numbers - their language structure makes it neurologically difficult to conceptualize mathematical recursion, suggesting that language doesn\'t just describe reality but fundamentally shapes the cognitive architectures we can develop.',
     funLevel: 10,
     difficultyLevel: 5
-  },
-  // Science: Recent/Niche
-  {
-    id: '11',
-    category: 'science',
-    title: 'Quantum Teleportation of Information',
-    content: 'In 2022, scientists managed to teleport quantum information between chips with a record-breaking fidelity, a key step toward building quantum computers and the quantum internet.',
-    funLevel: 10,
-    difficultyLevel: 4
-  },
-  {
-    id: '12',
-    category: 'science',
-    title: 'Octopus Throws Debris',
-    content: 'Recent underwater footage shows octopuses deliberately throwing debris and shells at other octopuses, suggesting surprising complexity in animal social behavior.',
-    funLevel: 9,
-    difficultyLevel: 3
-  },
-  // Psychology: Rare paradox
-  {
-    id: '13',
-    category: 'psychology',
-    title: 'The Mandela Effect',
-    content: 'A large group of people can share a false memory, like remembering the Berenstain Bears as "Berenstein". This is known as the Mandela Effect and is studied for what it reveals about human cognition.',
-    funLevel: 8,
-    difficultyLevel: 2
-  },
-  // Culture: Unusual/Obscure
-  {
-    id: '14',
-    category: 'culture',
-    title: 'The Lost Language of Whistled Speech',
-    content: 'Villages in the Canary Islands communicate using a whistled version of Spanish called "Silbo Gomero", preserving a linguistic tradition that survived centuries of change.',
-    funLevel: 9,
-    difficultyLevel: 3
-  },
-  // History: Rare event
-  {
-    id: '15',
-    category: 'history',
-    title: 'Dancing Plague of 1518',
-    content: "In 1518, dozens of people in Strasbourg danced uncontrollably for days in a 'dancing plague', baffling historians and remaining unexplained by modern science.",
-    funLevel: 8,
-    difficultyLevel: 4
-  },
-  // Nature: Recent discovery
-  {
-    id: '16',
-    category: 'nature',
-    title: 'Immortal Jellyfish',
-    content: 'The jellyfish Turritopsis dohrnii can revert to its juvenile form after adulthood, effectively defying aging and earning the nickname "immortal jellyfish".',
-    funLevel: 8,
-    difficultyLevel: 3
-  },
-  // Beginner/Intermediate facts are now more unusual:
-  {
-    id: '17',
-    category: 'history',
-    title: 'Great Emu War',
-    content: 'In 1932, Australia declared war on emus to curb their population—with machine guns. The emus won.',
-    funLevel: 9,
-    difficultyLevel: 2
-  },
-  {
-    id: '18',
-    category: 'science',
-    title: 'Plants Communicate by Sound',
-    content: 'Recent studies show some plants emit ultrasonic vibrations when stressed—suggesting primitive communication abilities.',
-    funLevel: 9,
-    difficultyLevel: 3
-  },
+  }
 ];
 
 const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLevel }) => {
