@@ -146,15 +146,21 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
     const preferences = getUserPreferences();
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    
+
     // Filter facts based on user level (difficulty scaling)
     const maxDifficultyForLevel = Math.min(Math.floor(userLevel / 2) + 1, 5);
     const suitableFacts = facts.filter(fact => fact.difficultyLevel <= maxDifficultyForLevel);
-    
+
+    console.log("SurpriseBox selectFactBasedOnPreferences", {
+      preferences, userLevel, dayOfYear, maxDifficultyForLevel, suitableFactsLength: suitableFacts.length, factsLength: facts.length
+    });
+
     // If user has no preferences yet, use difficulty-appropriate selection
     if (Object.keys(preferences).length === 0) {
       const factIndex = (dayOfYear + userLevel * 2) % suitableFacts.length;
-      return suitableFacts[factIndex];
+      const fact = suitableFacts[factIndex];
+      console.log("SurpriseBox picked (no prefs)", { fact, factIndex });
+      return fact;
     }
 
     // Weight facts by user preferences and difficulty
@@ -171,7 +177,9 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
 
     // Return top preferred fact with some randomness
     const topFacts = weightedFacts.slice(0, 3);
-    return topFacts[(dayOfYear + userLevel) % topFacts.length];
+    const chosen = topFacts[(dayOfYear + userLevel) % topFacts.length];
+    console.log("SurpriseBox picked (prefs)", { chosen, topFacts });
+    return chosen;
   };
 
   const toggleDailyReminders = () => {
@@ -210,7 +218,9 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
   };
 
   useEffect(() => {
-    setCurrentFact(selectFactBasedOnPreferences());
+    const fact = selectFactBasedOnPreferences();
+    setCurrentFact(fact);
+    console.log("SurpriseBox useEffect set fact", { fact, canOpen, userLevel });
 
     // Check if today's box was already opened and rated
     const today = new Date().toDateString();
@@ -330,6 +340,14 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
             <p className="text-slate-400">
               Solve today's puzzle to unlock this surprise box and discover something amazing!
             </p>
+          </div>
+        ) : isOpened && !currentFact ? (
+          <div className="text-center space-y-6 text-red-400">
+            <div className="text-2xl font-bold">😅 Oops! Discovery not found.</div>
+            <div>
+              We're having trouble fetching your fun fact. <br />
+              <span className="text-slate-400">Please refresh the page or check the developer console for more info.</span>
+            </div>
           </div>
         ) : isOpened && currentFact ? (
           <div className="space-y-4 animate-fade-in">
