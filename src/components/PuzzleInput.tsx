@@ -1,9 +1,10 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Lightbulb, AlertCircle } from "lucide-react";
 import { Puzzle } from "./puzzleData";
+import AttemptsTracker from "./puzzle/AttemptsTracker";
+import HintToggle from "./puzzle/HintToggle";
 
 interface PuzzleInputProps {
   userAnswer: string;
@@ -49,22 +50,9 @@ const PuzzleInput: React.FC<PuzzleInputProps> = ({
       </Button>
     </div>
     <div className="flex justify-between items-center">
-      <Button
-        variant="outline"
-        onClick={() => setShowHint(!showHint)}
-        className="text-sm border-slate-600 text-slate-300 hover:bg-slate-700"
-        disabled={disabled}
-      >
-        <Lightbulb className="w-4 h-4 mr-2" />
-        {showHint ? 'Hide' : 'Show'} Hint
-      </Button>
+      <HintToggle showHint={showHint} setShowHint={setShowHint} disabled={disabled} hint={hint} />
       <div className="flex items-center gap-4">
-        {attempts > 0 && (
-          <div className="flex items-center gap-2 text-sm text-slate-400">
-            <AlertCircle className="w-4 h-4" />
-            {attempts} attempt{attempts !== 1 ? 's' : ''}
-          </div>
-        )}
+        <AttemptsTracker attempts={attempts} />
         {isPracticeMode && (
           <Button
             variant="ghost"
@@ -78,17 +66,6 @@ const PuzzleInput: React.FC<PuzzleInputProps> = ({
         )}
       </div>
     </div>
-    {showHint && (
-      <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4">
-        <div className="flex items-start gap-2">
-          <Lightbulb className="w-5 h-5 text-blue-400 mt-0.5" />
-          <div>
-            <p className="font-medium text-blue-300 mb-1">Hint:</p>
-            <p className="text-blue-200">{hint}</p>
-          </div>
-        </div>
-      </div>
-    )}
   </div>
 );
 
