@@ -1,3 +1,4 @@
+
 export interface Puzzle {
   id: string;
   type: 'riddle' | 'word' | 'math' | 'logic' | 'history' | 'science' | 'psychology' | 'music';
@@ -8,127 +9,187 @@ export interface Puzzle {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-// 100 categorized puzzles (shortened here for brevity, but actual file will have 100 diverse, shuffled entries):
-
+// Sophisticated and challenging puzzles
 export const puzzles: Puzzle[] = [
-  // Riddles
+  // Advanced Riddles
   {
     id: '1',
     type: 'riddle',
-    question: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?",
-    answer: "map",
-    hint: "Think about something that represents places but isn't the actual place.",
-    points: 25,
-    difficulty: 'easy'
+    question: "I am the silence between notes that gives music meaning, the pause between words that creates emphasis, and the space between thoughts that allows understanding. What am I?",
+    answer: "rest",
+    hint: "Think about what gives structure to time-based art forms.",
+    points: 50,
+    difficulty: 'hard'
   },
   {
     id: '2',
     type: 'word',
-    question: "What 8-letter word can have a letter taken away and it still makes a word? Take another letter away and it still makes a word. Keep on doing that until you have one letter left. What is the word?",
-    answer: "starting",
-    hint: "Think about words that can be shortened progressively: starting → tarting → arting → ting → ing → in → i",
-    points: 40,
+    question: "What English word becomes shorter when you add two letters to it?",
+    answer: "short",
+    hint: "Think literally about the word's meaning when letters are added.",
+    points: 45,
     difficulty: 'medium'
   },
   {
     id: '3',
     type: 'logic',
-    question: "A man lives on the 20th floor of an apartment building. Every morning he takes the elevator down to the ground floor. When he comes home, he takes the elevator to the 10th floor and walks the rest of the way... except on rainy days, when he takes the elevator all the way to the 20th floor. Why?",
-    answer: "short",
-    hint: "Think about physical limitations and what rain might enable someone to do differently.",
-    points: 50,
+    question: "In a room of 23 people, what's the probability that at least two share the same birthday?",
+    answer: "50%",
+    hint: "This famous paradox seems counterintuitive - think about all possible pairs.",
+    points: 60,
     difficulty: 'hard'
   },
   {
     id: '4',
     type: 'math',
-    question: "If you multiply me by any other number, the answer will always be the same. What number am I?",
-    answer: "0",
-    hint: "Think about the properties of multiplication with special numbers.",
-    points: 20,
-    difficulty: 'easy'
+    question: "What is the only number that is equal to the sum of its digits raised to consecutive powers starting from 1?",
+    answer: "135",
+    hint: "Try: 1^1 + 3^2 + 5^3",
+    points: 55,
+    difficulty: 'hard'
   },
   {
     id: '5',
-    type: 'riddle',
-    question: "The more you take, the more you leave behind. What am I?",
-    answer: "footsteps",
-    hint: "Think about something you create by moving forward.",
-    points: 30,
-    difficulty: 'easy'
+    type: 'history',
+    question: "Which Byzantine Emperor's legal code became the foundation for modern European law and is still studied today?",
+    answer: "justinian",
+    hint: "His code was compiled around 529-534 CE and influenced legal systems for over 1000 years.",
+    points: 50,
+    difficulty: 'medium'
   },
   {
     id: '6',
-    type: 'math',
-    question: "What comes next in this sequence: 1, 1, 2, 3, 5, 8, ?",
-    answer: "13",
-    hint: "Each number is the sum of the two preceding numbers.",
-    points: 30,
+    type: 'science',
+    question: "What quantum phenomenon allows particles to instantaneously affect each other regardless of distance?",
+    answer: "entanglement",
+    hint: "Einstein called it 'spooky action at a distance' but it's now proven real.",
+    points: 45,
     difficulty: 'medium'
   },
   {
     id: '7',
-    type: 'logic',
-    question: "You have 12 balls, 11 are identical and 1 weighs slightly different. Using a balance scale only 3 times, how can you find the different ball?",
-    answer: "divide",
-    hint: "Think about dividing the balls into groups and comparing them systematically.",
+    type: 'psychology',
+    question: "What cognitive bias causes people to overestimate their ability to predict outcomes after they've already occurred?",
+    answer: "hindsight bias",
+    hint: "Also known as the 'I-knew-it-all-along' effect.",
+    points: 40,
+    difficulty: 'medium'
+  },
+  {
+    id: '8',
+    type: 'music',
+    question: "What musical interval, when inverted, creates its complement to reach an octave?",
+    answer: "tritone",
+    hint: "This 'devil's interval' inverts to itself - 6 semitones up or down.",
+    points: 55,
+    difficulty: 'hard'
+  },
+  {
+    id: '9',
+    type: 'riddle',
+    question: "I am not visible, yet I shape everything you see. I have no mass, yet I bend light. I can be curved, folded, and torn. What am I?",
+    answer: "spacetime",
+    hint: "Einstein showed that this fabric of reality can be manipulated by mass and energy.",
+    points: 65,
+    difficulty: 'hard'
+  },
+  {
+    id: '10',
+    type: 'history',
+    question: "What ancient trading network connected civilizations from Rome to China, but was never actually a single road?",
+    answer: "silk road",
+    hint: "Named by a 19th-century German geographer, this was actually multiple routes.",
+    points: 35,
+    difficulty: 'medium'
+  },
+  {
+    id: '11',
+    type: 'science',
+    question: "What recently discovered state of matter occurs when atoms are cooled to near absolute zero and begin to behave as a single quantum entity?",
+    answer: "bose-einstein condensate",
+    hint: "Predicted in 1924-25, first created in 1995, earning a Nobel Prize in 2001.",
     points: 60,
     difficulty: 'hard'
   },
   {
-    id: '8',
-    type: 'riddle',
-    question: "I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?",
-    answer: "echo",
-    hint: "Think about sounds that bounce back to you.",
+    id: '12',
+    type: 'logic',
+    question: "In the Monty Hall problem, should you switch doors after the host opens a losing door?",
+    answer: "yes",
+    hint: "Your chance doubles from 1/3 to 2/3 if you switch.",
+    points: 40,
+    difficulty: 'medium'
+  },
+  {
+    id: '13',
+    type: 'word',
+    question: "What word can be a noun meaning 'a small stream' and a verb meaning 'to tolerate'?",
+    answer: "brook",
+    hint: "One meaning involves water, the other involves patience.",
     points: 35,
     difficulty: 'medium'
   },
-  // New categories (history, science, psychology, music, etc)
   {
-    id: '21',
-    type: 'history',
-    question: "Who was the first president of the United States?",
-    answer: "george washington",
-    hint: "He led the American Revolution and appears on the $1 bill.",
-    points: 10,
-    difficulty: 'easy'
-  },
-  {
-    id: '22',
-    type: 'science',
-    question: "What is the powerhouse of the cell?",
-    answer: "mitochondria",
-    hint: "It's an organelle famous for producing energy.",
-    points: 15,
-    difficulty: 'easy'
-  },
-  {
-    id: '23',
-    type: 'psychology',
-    question: "What is the term for a persistent, irrational fear of a specific object or situation?",
-    answer: "phobia",
-    hint: "Arachnophobia is an example.",
-    points: 15,
-    difficulty: 'easy'
-  },
-  {
-    id: '24',
-    type: 'music',
-    question: "Which composer became deaf late in life but continued to write music?",
-    answer: "beethoven",
-    hint: "He composed the 9th Symphony.",
-    points: 20,
+    id: '14',
+    type: 'math',
+    question: "What is the name for a number that equals the sum of its proper divisors?",
+    answer: "perfect",
+    hint: "The first few are 6, 28, 496... they're quite rare.",
+    points: 45,
     difficulty: 'medium'
   },
-  // ... (90+ more diverse categorized puzzles to total 100)
   {
-    id: '100',
+    id: '15',
+    type: 'psychology',
+    question: "What phenomenon explains why people in groups tend to make more extreme decisions than individuals?",
+    answer: "polarization",
+    hint: "Groups amplify the initial tendencies of their members.",
+    points: 45,
+    difficulty: 'medium'
+  },
+  {
+    id: '16',
+    type: 'history',
+    question: "Which lost civilization built the massive stone heads on Easter Island using a 'walking' technique?",
+    answer: "rapa nui",
+    hint: "Recent experiments proved the statues could be 'walked' upright using ropes.",
+    points: 50,
+    difficulty: 'medium'
+  },
+  {
+    id: '17',
     type: 'science',
-    question: "What gas do plants absorb from the atmosphere for photosynthesis?",
-    answer: "carbon dioxide",
-    hint: "It's the gas you exhale.",
-    points: 10,
-    difficulty: 'easy'
+    question: "What type of stellar remnant is so dense that a teaspoon would weigh as much as Mount Everest?",
+    answer: "neutron star",
+    hint: "These form when massive stars collapse, creating matter made entirely of neutrons.",
+    points: 45,
+    difficulty: 'medium'
+  },
+  {
+    id: '18',
+    type: 'riddle',
+    question: "I exist only in potential until observed, I can be in multiple states simultaneously, yet measurement forces me to choose. What am I?",
+    answer: "quantum superposition",
+    hint: "Schrödinger's famous thought experiment illustrates this principle.",
+    points: 70,
+    difficulty: 'hard'
+  },
+  {
+    id: '19',
+    type: 'music',
+    question: "What tuning system divides the octave into 12 equal parts, allowing music to be played in any key?",
+    answer: "equal temperament",
+    hint: "This compromise system replaced pure mathematical ratios for practical flexibility.",
+    points: 50,
+    difficulty: 'medium'
+  },
+  {
+    id: '20',
+    type: 'logic',
+    question: "What paradox demonstrates that a set of all sets that do not contain themselves creates a logical contradiction?",
+    answer: "russell's paradox",
+    hint: "If such a set contains itself, it shouldn't; if it doesn't, it should.",
+    points: 65,
+    difficulty: 'hard'
   }
 ];

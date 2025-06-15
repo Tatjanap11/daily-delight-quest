@@ -27,88 +27,124 @@ interface UserRating {
 }
 
 const facts: Fact[] = [
-  // Beginner Facts (Level 1-2)
+  // Advanced Science Facts
   {
     id: '1',
     category: 'science',
-    title: 'Octopuses Have Three Hearts',
-    content: 'Octopuses have three hearts! Two pump blood to the gills, while the third pumps blood to the rest of the body. Interestingly, the main heart stops beating when they swim, which is why they prefer crawling to avoid exhaustion.',
-    funLevel: 9,
-    difficultyLevel: 1
-  },
-  {
-    id: '2',
-    category: 'psychology',
-    title: 'The Paradox of Choice',
-    content: 'Having too many options can actually make us less happy with our decisions. Psychologist Barry Schwartz found that when faced with 24 varieties of jam, only 3% of customers made a purchase, compared to 30% when offered just 6 varieties.',
-    funLevel: 8,
-    difficultyLevel: 1
-  },
-  {
-    id: '3',
-    category: 'culture',
-    title: 'The Japanese Art of Forest Bathing',
-    content: 'In Japan, "Shinrin-yoku" or forest bathing is a recognized form of therapy. Simply spending mindful time in forests has been scientifically proven to reduce stress hormones, boost immune function, and improve overall well-being.',
-    funLevel: 7,
-    difficultyLevel: 1
-  },
-  
-  // Intermediate Facts (Level 3-4)
-  {
-    id: '4',
-    category: 'science',
-    title: 'Quantum Entanglement in Bird Navigation',
-    content: 'European robins may use quantum entanglement for navigation! Cryptochrome proteins in their eyes create "quantum compasses" where entangled electron pairs respond to Earth\'s magnetic field, allowing them to literally see magnetic fields as overlays on their vision.',
-    funLevel: 10,
-    difficultyLevel: 3
-  },
-  {
-    id: '5',
-    category: 'psychology',
-    title: 'The Dunning-Kruger-Dunning Effect',
-    content: 'There\'s a meta-cognitive bias where people who are incompetent at recognizing the Dunning-Kruger effect in themselves are often the most confident that others suffer from it. This creates recursive loops of overconfidence about cognitive biases.',
-    funLevel: 9,
-    difficultyLevel: 3
-  },
-  {
-    id: '6',
-    category: 'history',
-    title: 'The Antikythera Mechanism\'s Lost Functions',
-    content: 'The ancient Greek Antikythera mechanism wasn\'t just an astronomical calculator - recent analysis suggests it could predict the color of lunar eclipses and had a "Venus dial" that tracked the 8-year cycle where Venus returns to the same position relative to Earth.',
-    funLevel: 10,
-    difficultyLevel: 3
-  },
-  
-  // Advanced Facts (Level 5+)
-  {
-    id: '7',
-    category: 'science',
-    title: 'Tardigrades\' Quantum Survival Strategy',
-    content: 'Tardigrades don\'t just survive extreme conditions - they enter a state called "cryptobiosis" where their metabolism drops to 0.01% of normal, and they produce unique proteins that form glass-like structures, essentially turning their cells into biological time capsules that can survive for millennia.',
-    funLevel: 10,
-    difficultyLevel: 5
-  },
-  {
-    id: '8',
-    category: 'psychology',
-    title: 'Collective Metacognition Paradox',
-    content: 'Groups can exhibit "collective metacognition" - knowing what they know as a group - but this creates a paradox: the more aware a group becomes of its collective knowledge, the less efficient individual members become at accessing their own expertise, leading to "cognitive offloading paralysis."',
-    funLevel: 9,
-    difficultyLevel: 5
-  },
-  {
-    id: '9',
-    category: 'nature',
-    title: 'Mycorrhizal Network Market Economics',
-    content: 'Forest fungal networks don\'t just share resources - they operate complex "carbon markets" where trees pay premium rates for nutrients during stress, mother trees give "loans" to their offspring with "interest" paid in future carbon, and some fungi act as "resource brokers" charging transaction fees.',
+    title: 'Quantum Biology in Bird Navigation',
+    content: 'European robins use quantum entanglement in their eyes to navigate. Cryptochrome proteins create entangled electron pairs that respond to Earth\'s magnetic field, allowing birds to literally see magnetic fields overlaid on their vision - a biological compass that operates on quantum mechanics.',
     funLevel: 10,
     difficultyLevel: 4
   },
   {
-    id: '10',
+    id: '2',
+    category: 'psychology',
+    title: 'The Tetris Effect on Memory',
+    content: 'Playing Tetris within 6 hours of a traumatic event can reduce intrusive memories by up to 62%. The visual-spatial processing required by the game interferes with the brain\'s ability to consolidate traumatic visual memories, essentially "overwriting" the trauma pathway.',
+    funLevel: 9,
+    difficultyLevel: 3
+  },
+  {
+    id: '3',
+    category: 'history',
+    title: 'The Antikythera Mechanism\'s Lost Purpose',
+    content: 'The 2,100-year-old Antikythera mechanism wasn\'t just an astronomical calculator - recent analysis reveals it could predict the exact color of lunar eclipses and track the 8-year Venus cycle. It represents technology that wouldn\'t be seen again for 1,400 years.',
+    funLevel: 10,
+    difficultyLevel: 4
+  },
+  {
+    id: '4',
+    category: 'science',
+    title: 'Tardigrades\' Cryptobiotic Time Travel',
+    content: 'Tardigrades can enter cryptobiosis, reducing their metabolism to 0.01% of normal and essentially stopping time for themselves. They produce unique proteins that form glass-like structures, turning their cells into biological time capsules that can survive for millennia.',
+    funLevel: 10,
+    difficultyLevel: 4
+  },
+  {
+    id: '5',
     category: 'culture',
-    title: 'The Linguistic Relativity of Mathematical Concepts',
-    content: 'The Pirahã people of the Amazon don\'t just lack words for exact numbers - their language structure makes it neurologically difficult to conceptualize mathematical recursion, suggesting that language doesn\'t just describe reality but fundamentally shapes the cognitive architectures we can develop.',
+    title: 'The Pirahã Language and Mathematical Impossibility',
+    content: 'The Pirahã people of the Amazon lack words for exact numbers and their language structure makes it neurologically difficult to conceptualize mathematical recursion. This suggests language doesn\'t just describe reality but fundamentally shapes the cognitive architectures we can develop.',
+    funLevel: 10,
+    difficultyLevel: 5
+  },
+  {
+    id: '6',
+    category: 'science',
+    title: 'Mycorrhizal Networks as Forest Internet',
+    content: 'Forest fungal networks operate complex "carbon markets" where trees pay premium rates for nutrients during stress, mother trees give "loans" to offspring with future carbon "interest," and fungi act as resource brokers charging transaction fees - a biological economy predating human civilization.',
+    funLevel: 10,
+    difficultyLevel: 4
+  },
+  {
+    id: '7',
+    category: 'psychology',
+    title: 'Collective Metacognition Paradox',
+    content: 'Groups can exhibit "collective metacognition" - knowing what they know as a group. However, the more aware a group becomes of its collective knowledge, the less efficient individuals become at accessing their own expertise, creating "cognitive offloading paralysis."',
+    funLevel: 9,
+    difficultyLevel: 5
+  },
+  {
+    id: '8',
+    category: 'history',
+    title: 'The Voynich Manuscript\'s Statistical Impossibility',
+    content: 'The Voynich Manuscript displays statistical properties consistent with natural language but follows no known linguistic rules. Its word frequency distribution matches living languages, yet it contains no decipherable meaning - a 600-year-old cryptographic impossibility.',
+    funLevel: 10,
+    difficultyLevel: 4
+  },
+  {
+    id: '9',
+    category: 'science',
+    title: 'Time Crystals Breaking Physics',
+    content: 'Time crystals are a new state of matter that repeat in time rather than space, effectively creating perpetual motion without energy input. Discovered in 2016, they violate our understanding of equilibrium physics and could revolutionize quantum computing.',
+    funLevel: 10,
+    difficultyLevel: 5
+  },
+  {
+    id: '10',
+    category: 'nature',
+    title: 'Slime Molds as Living Computers',
+    content: 'Physarum polycephalum, a brainless slime mold, can solve complex optimization problems like finding the shortest path between multiple points - recreating efficient subway systems and trade networks. It processes information through cytoplasmic streaming, creating a biological computer.',
+    funLevel: 10,
+    difficultyLevel: 3
+  },
+  {
+    id: '11',
+    category: 'psychology',
+    title: 'The Baader-Meinhof Phenomenon Cascade',
+    content: 'The frequency illusion (Baader-Meinhof phenomenon) doesn\'t just make you notice things more - it can cascade into false pattern recognition, where your brain starts creating connections between unrelated coincidences, potentially contributing to conspiracy thinking and paranormal beliefs.',
+    funLevel: 9,
+    difficultyLevel: 3
+  },
+  {
+    id: '12',
+    category: 'history',
+    title: 'The Bronze Age Collapse\'s Mysterious Catalyst',
+    content: 'Around 1200 BCE, advanced Bronze Age civilizations across the Mediterranean simultaneously collapsed within decades. The mysterious "Sea Peoples" mentioned in Egyptian records may have been climate refugees, but recent evidence suggests a cascading system failure triggered by drought, trade disruption, and social unrest.',
+    funLevel: 10,
+    difficultyLevel: 4
+  },
+  {
+    id: '13',
+    category: 'science',
+    title: 'Dark Energy\'s Accelerating Mystery',
+    content: 'Dark energy, comprising 68% of the universe, is causing space itself to expand at an accelerating rate. If this acceleration continues, in 100 billion years, galaxies beyond our local group will be invisible to future astronomers - essentially erasing evidence of the Big Bang.',
+    funLevel: 10,
+    difficultyLevel: 4
+  },
+  {
+    id: '14',
+    category: 'culture',
+    title: 'The Sapir-Whorf Hypothesis in Color Perception',
+    content: 'The Himba tribe of Namibia, who have different color categories than English speakers, can instantly spot green squares among blue ones but struggle to distinguish blue from green when they\'re linguistically categorized together. Language literally changes what we see.',
+    funLevel: 9,
+    difficultyLevel: 3
+  },
+  {
+    id: '15',
+    category: 'science',
+    title: 'Quantum Coherence in Photosynthesis',
+    content: 'Plants use quantum coherence to achieve near-perfect energy transfer efficiency in photosynthesis. Chlorophyll molecules exist in quantum superposition, allowing energy to "sample" all possible paths simultaneously and choose the most efficient route - quantum computing in every leaf.',
     funLevel: 10,
     difficultyLevel: 5
   }
