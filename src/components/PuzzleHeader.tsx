@@ -69,7 +69,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
                   variant="outline"
                   size="sm"
                   disabled
-                  className="text-xs border-slate-700 text-slate-400 opacity-60 pointer-events-none"
+                  className="text-xs bg-slate-800 border-slate-700 text-slate-400 opacity-60 pointer-events-none"
                   style={{ cursor: "not-allowed" }}
                 >
                   <Zap className="w-3 h-3 mr-1" />
@@ -86,7 +86,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
             variant="outline"
             size="sm"
             onClick={onStartPractice}
-            className="text-xs border-purple-600 text-purple-300 hover:bg-purple-900/50 hover:text-purple-200"
+            className="text-xs bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-slate-200"
           >
             <Zap className="w-3 h-3 mr-1" />
             Practice Mode

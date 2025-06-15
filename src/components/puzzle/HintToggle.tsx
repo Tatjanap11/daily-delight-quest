@@ -15,7 +15,7 @@ const HintToggle: React.FC<HintToggleProps> = ({ showHint, setShowHint, disabled
     <Button
       variant="outline"
       onClick={() => setShowHint(!showHint)}
-      className="text-sm border-purple-600 text-purple-300 hover:bg-purple-900/50 hover:text-purple-200"
+      className="text-sm bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-slate-200"
       disabled={disabled}
     >
       <Lightbulb className="w-4 h-4 mr-2" />
