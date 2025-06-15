@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,7 @@ interface PuzzleHeaderProps {
   isPracticeMode: boolean;
   completed: boolean;
   onStartPractice: () => void;
-  practiceModeLocked?: boolean; // new prop
+  practiceModeLocked?: boolean;
 }
 
 const getDifficultyColor = (difficulty: string) => {
@@ -77,7 +78,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
               </span>
             </TooltipTrigger>
             <TooltipContent className="bg-slate-800 border-slate-700 text-slate-200 max-w-xs">
-              You’ve leveled up! New practice challenges will appear after your next daily challenge.
+              You've leveled up! New practice challenges will appear after your next daily challenge.
             </TooltipContent>
           </Tooltip>
         ) : (
@@ -85,7 +86,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
             variant="outline"
             size="sm"
             onClick={onStartPractice}
-            className="text-xs border-slate-600 text-slate-300 hover:bg-slate-700"
+            className="text-xs border-purple-600 text-purple-300 hover:bg-purple-900/50 hover:text-purple-200"
           >
             <Zap className="w-3 h-3 mr-1" />
             Practice Mode

@@ -15,19 +15,19 @@ const HintToggle: React.FC<HintToggleProps> = ({ showHint, setShowHint, disabled
     <Button
       variant="outline"
       onClick={() => setShowHint(!showHint)}
-      className="text-sm border-slate-600 text-slate-300 hover:bg-slate-700"
+      className="text-sm border-purple-600 text-purple-300 hover:bg-purple-900/50 hover:text-purple-200"
       disabled={disabled}
     >
       <Lightbulb className="w-4 h-4 mr-2" />
       {showHint ? 'Hide' : 'Show'} Hint
     </Button>
     {showHint && (
-      <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 mt-2">
+      <div className="bg-purple-900/30 border border-purple-700 rounded-lg p-4 mt-2">
         <div className="flex items-start gap-2">
-          <Lightbulb className="w-5 h-5 text-blue-400 mt-0.5" />
+          <Lightbulb className="w-5 h-5 text-purple-400 mt-0.5" />
           <div>
-            <p className="font-medium text-blue-300 mb-1">Hint:</p>
-            <p className="text-blue-200">{hint}</p>
+            <p className="font-medium text-purple-300 mb-1">Hint:</p>
+            <p className="text-purple-200">{hint}</p>
           </div>
         </div>
       </div>
