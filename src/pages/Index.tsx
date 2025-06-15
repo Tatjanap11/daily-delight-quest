@@ -8,16 +8,12 @@ import Leaderboard from '@/components/Leaderboard';
 import UserStats from '@/components/UserStats';
 import { useToast } from '@/hooks/use-toast';
 import { Brain, Star, Trophy } from 'lucide-react';
-import MainHeader from "@/components/MainHeader";
-import MainTabs from "@/components/MainTabs";
-import MainNavbar from "@/components/MainNavbar";
 
 const Index = () => {
   const [currentTab, setCurrentTab] = useState('game');
   const [userStats, setUserStats] = useState({
     level: 1,
     points: 0,
-    // Store boxesOpened as daily array, not just a count
     boxesOpened: 0,
     streak: 0,
     totalCorrectAnswers: 0
@@ -31,23 +27,10 @@ const Index = () => {
   const canLevelUp = userStats.points >= pointsForNextLevel;
 
   useEffect(() => {
-    // Rehydrate boxesOpened per day array for flexibility
     const savedStats = localStorage.getItem('userStats');
-    let stats = userStats;
     if (savedStats) {
-      stats = JSON.parse(savedStats);
-      setUserStats(stats);
-    }
-    // Count boxes opened after rehydration, fallback for legacy
-    const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date:string, count:number}]
-    const totalBoxesOpened = boxHistory.reduce((sum, d) => sum + (d.count || 1), 0);
-
-    // If userStats.boxesOpened doesn't match history, correct it
-    if (totalBoxesOpened !== stats.boxesOpened) {
-      setUserStats(prev => ({ ...prev, boxesOpened: totalBoxesOpened }));
-      // Also write back to localStorage
-      const mergedStats = { ...stats, boxesOpened: totalBoxesOpened };
-      localStorage.setItem('userStats', JSON.stringify(mergedStats));
+      const parsed = JSON.parse(savedStats);
+      setUserStats(parsed);
     }
   }, []);
 
@@ -109,24 +92,11 @@ const Index = () => {
     });
   };
 
-  // Called from SurpriseBox when a box is opened
   const handleBoxOpened = () => {
-    // Increment both the userStats count and a daily record
-    const today = new Date().toDateString();
-    let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]'); // [{date,count}]
-    const idx = boxHistory.findIndex((entry: any) => entry.date === today);
-    if (idx >= 0) {
-      boxHistory[idx].count += 1;
-    } else {
-      boxHistory.push({ date: today, count: 1 });
-    }
-    localStorage.setItem('boxHistory', JSON.stringify(boxHistory));
-    const total = boxHistory.reduce((sum: number, d: any) => sum + (d.count || 1), 0);
-    setUserStats(prev => ({ ...prev, boxesOpened: total }));
-
-    // Legacy: write back to userStats localStorage
-    const stats = { ...userStats, boxesOpened: total };
-    localStorage.setItem('userStats', JSON.stringify(stats));
+    setUserStats(prev => ({
+      ...prev,
+      boxesOpened: prev.boxesOpened + 1
+    }));
   };
 
   const handleLevelUp = () => {
@@ -155,8 +125,39 @@ const Index = () => {
     <TooltipProvider>
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
-          <MainNavbar />
-          <MainHeader pointsForNextLevel={pointsForNextLevel} />
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                Daily WonderBox
+              </h1>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-slate-400 hover:text-blue-400">
+                    <HelpCircle className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-sm p-4 bg-slate-800 border-slate-700 text-slate-200">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-blue-400">How to Play:</h4>
+                    <ul className="text-sm space-y-1">
+                      <li>• Solve daily puzzles to earn points and unlock surprise boxes</li>
+                      <li>• Use Practice Mode to solve extra puzzles for more points</li>
+                      <li>• Rate facts to get personalized content</li>
+                      <li>• Maintain streaks by playing daily</li>
+                      <li>• Level up to unlock harder puzzles (need {pointsForNextLevel} points per level)</li>
+                      <li>• Compete on the leaderboard</li>
+                    </ul>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <p className="text-blue-200 text-lg">
+              Solve puzzles, unlock fascinating facts, and expand your mind daily!
+            </p>
+          </div>
+
+          {/* User Stats Bar */}
           <DailyStatsBar
             userStats={userStats}
             pointsForNextLevel={pointsForNextLevel}
@@ -164,7 +165,35 @@ const Index = () => {
             canLevelUp={canLevelUp}
             onLevelUp={handleLevelUp}
           />
-          <MainTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
+
+          {/* Navigation */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-slate-800/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-slate-700">
+              <div className="flex gap-2">
+                {[
+                  { id: 'game', label: "Today's Puzzle", icon: Brain },
+                  { id: 'stats', label: 'My Progress', icon: Star },
+                  { id: 'leaderboard', label: 'Leaderboard', icon: Trophy }
+                ].map(({ id, label, icon: Icon }) => (
+                  <Button
+                    key={id}
+                    variant={currentTab === id ? "default" : "ghost"}
+                    onClick={() => setCurrentTab(id)}
+                    className={`rounded-full transition-all duration-200 ${
+                      currentTab === id 
+                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg' 
+                        : 'hover:bg-slate-700 text-slate-300'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mr-2" />
+                    {label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
           <div className="space-y-8">
             {currentTab === 'game' && (
               <GameAndBoxPanel
@@ -175,9 +204,11 @@ const Index = () => {
                 practiceModeLocked={practiceModeLocked}
               />
             )}
+
             {currentTab === 'stats' && (
               <UserStats stats={userStats} />
             )}
+
             {currentTab === 'leaderboard' && (
               <Leaderboard currentUser={userStats} />
             )}

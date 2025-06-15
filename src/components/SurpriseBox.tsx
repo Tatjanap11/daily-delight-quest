@@ -114,26 +114,6 @@ const facts: Fact[] = [
   }
 ];
 
-// Fallback always-available facts, to guarantee a discovery is shown
-const fallbackFacts: Fact[] = [
-  {
-    id: 'f1',
-    category: 'science',
-    title: 'Honey Never Spoils',
-    content: "Archaeologists have found edible honey in ancient Egyptian tombs that is thousands of years old. Honey's chemical makeup makes it nearly impossible for bacteria and microorganisms to grow.",
-    funLevel: 8,
-    difficultyLevel: 1
-  },
-  {
-    id: 'f2',
-    category: 'culture',
-    title: 'The Eiffel Tower Can Grow Taller',
-    content: "During hot days, the metal of the Eiffel Tower expands, making the tower grow up to 15 centimeters (about 6 inches) taller.",
-    funLevel: 6,
-    difficultyLevel: 1
-  }
-];
-
 const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLevel }) => {
   const [isOpened, setIsOpened] = useState(false);
   const [currentFact, setCurrentFact] = useState<Fact | null>(null);
@@ -166,49 +146,32 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
     const preferences = getUserPreferences();
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-
+    
     // Filter facts based on user level (difficulty scaling)
     const maxDifficultyForLevel = Math.min(Math.floor(userLevel / 2) + 1, 5);
     const suitableFacts = facts.filter(fact => fact.difficultyLevel <= maxDifficultyForLevel);
-
-    // Diagnostics (can remove/disable in production)
-    console.log("SurpriseBox selectFactBasedOnPreferences", {
-      preferences, userLevel, dayOfYear, maxDifficultyForLevel, suitableFactsLength: suitableFacts.length, factsLength: facts.length
-    });
-
-    let fact: Fact | undefined = undefined;
-
+    
     // If user has no preferences yet, use difficulty-appropriate selection
     if (Object.keys(preferences).length === 0) {
-      if (suitableFacts.length > 0) {
-        const factIndex = (dayOfYear + userLevel * 2) % suitableFacts.length;
-        fact = suitableFacts[factIndex];
-        console.log("SurpriseBox picked (no prefs)", { fact, factIndex });
-      }
-    } else if (suitableFacts.length > 0) {
-      // Weight facts by user preferences and difficulty
-      const weightedFacts = suitableFacts.map(f => ({
-        ...f,
-        weight: (preferences[f.category] || 2.5) + (f.difficultyLevel * 0.1)
-      }));
-
-      weightedFacts.sort((a, b) => {
-        if (b.weight !== a.weight) return b.weight - a.weight;
-        return (dayOfYear + userLevel) % 2 === 0 ? 1 : -1;
-      });
-
-      const topFacts = weightedFacts.slice(0, 3);
-      fact = topFacts[(dayOfYear + userLevel) % topFacts.length];
-      console.log("SurpriseBox picked (prefs)", { chosen: fact, topFacts });
+      const factIndex = (dayOfYear + userLevel * 2) % suitableFacts.length;
+      return suitableFacts[factIndex];
     }
 
-    // Fallback if no fact found (additional defensiveness):
-    if (!fact) {
-      const fallbackPick = fallbackFacts[(dayOfYear + userLevel) % fallbackFacts.length];
-      console.log("SurpriseBox fallbackFact used", { fallbackPick });
-      return fallbackPick;
-    }
-    return fact;
+    // Weight facts by user preferences and difficulty
+    const weightedFacts = suitableFacts.map(fact => ({
+      ...fact,
+      weight: (preferences[fact.category] || 2.5) + (fact.difficultyLevel * 0.1) // slight preference for higher difficulty
+    }));
+
+    // Sort by preference and use day/level as tiebreaker
+    weightedFacts.sort((a, b) => {
+      if (b.weight !== a.weight) return b.weight - a.weight;
+      return (dayOfYear + userLevel) % 2 === 0 ? 1 : -1;
+    });
+
+    // Return top preferred fact with some randomness
+    const topFacts = weightedFacts.slice(0, 3);
+    return topFacts[(dayOfYear + userLevel) % topFacts.length];
   };
 
   const toggleDailyReminders = () => {
@@ -247,9 +210,7 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
   };
 
   useEffect(() => {
-    const fact = selectFactBasedOnPreferences();
-    setCurrentFact(fact);
-    console.log("SurpriseBox useEffect set fact", { fact, canOpen, userLevel });
+    setCurrentFact(selectFactBasedOnPreferences());
 
     // Check if today's box was already opened and rated
     const today = new Date().toDateString();
@@ -288,23 +249,18 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
   };
 
   const handleOpenBox = () => {
-    if (!canOpen || isOpened) return;
+    if (!canOpen || isOpened || !currentFact) return;
+
     setIsAnimating(true);
+    
     setTimeout(() => {
       setIsOpened(true);
       setIsAnimating(false);
       onBoxOpened();
+      
       // Save that today's box was opened
       const today = new Date().toDateString();
       localStorage.setItem(`box_opened_${today}`, 'true');
-      // Defensive: if fact is STILL null, re-pick:
-      if (!currentFact) {
-        const fallbackFact = selectFactBasedOnPreferences();
-        setCurrentFact(fallbackFact);
-        console.error("SurpriseBox: No fact found at open, forced fallback.", { fallbackFact });
-      } else {
-        console.log("SurpriseBox: Box opened with currentFact", { currentFact });
-      }
     }, 1000);
   };
 
@@ -374,17 +330,6 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
             <p className="text-slate-400">
               Solve today's puzzle to unlock this surprise box and discover something amazing!
             </p>
-          </div>
-        ) : isOpened && !currentFact ? (
-          <div className="text-center space-y-6 text-red-400">
-            <div className="text-2xl font-bold">😅 Oops! Discovery not found.</div>
-            <div>
-              Something went wrong loading your discovery.<br/>
-              <span className="text-slate-400">
-                Try refreshing the page.<br/>
-                <strong>This should never happen! Please contact support if you keep seeing this.</strong>
-              </span>
-            </div>
           </div>
         ) : isOpened && currentFact ? (
           <div className="space-y-4 animate-fade-in">
