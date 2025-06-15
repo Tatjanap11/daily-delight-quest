@@ -1,7 +1,9 @@
 
 import { useEffect, useState } from 'react';
+import { checkAndUpgradeStorage } from '../utils/storageVersion';
 
 export function useBoardState() {
+  useEffect(() => { checkAndUpgradeStorage(); }, []);
   const [currentTab, setCurrentTab] = useState('game');
   const [todayCompleted, setTodayCompleted] = useState(false);
   const [practiceModeLocked, setPracticeModeLocked] = useState(false);

@@ -1,4 +1,6 @@
+
 import { useEffect, useCallback, useState } from 'react';
+import { checkAndUpgradeStorage } from '../utils/storageVersion';
 
 export interface UserStatsState {
   level: number;
@@ -9,6 +11,9 @@ export interface UserStatsState {
 }
 
 export function useUserStats() {
+  // Auto-migrate/fix localStorage at startup
+  useEffect(() => { checkAndUpgradeStorage(); }, []);
+
   const [userStats, setUserStats] = useState<UserStatsState>({
     level: 1,
     points: 0,
