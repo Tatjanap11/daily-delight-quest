@@ -114,6 +114,26 @@ const facts: Fact[] = [
   }
 ];
 
+// Fallback always-available facts, to guarantee a discovery is shown
+const fallbackFacts: Fact[] = [
+  {
+    id: 'f1',
+    category: 'science',
+    title: 'Honey Never Spoils',
+    content: "Archaeologists have found edible honey in ancient Egyptian tombs that is thousands of years old. Honey's chemical makeup makes it nearly impossible for bacteria and microorganisms to grow.",
+    funLevel: 8,
+    difficultyLevel: 1
+  },
+  {
+    id: 'f2',
+    category: 'culture',
+    title: 'The Eiffel Tower Can Grow Taller',
+    content: "During hot days, the metal of the Eiffel Tower expands, making the tower grow up to 15 centimeters (about 6 inches) taller.",
+    funLevel: 6,
+    difficultyLevel: 1
+  }
+];
+
 const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLevel }) => {
   const [isOpened, setIsOpened] = useState(false);
   const [currentFact, setCurrentFact] = useState<Fact | null>(null);
@@ -151,35 +171,44 @@ const SurpriseBox: React.FC<SurpriseBoxProps> = ({ canOpen, onBoxOpened, userLev
     const maxDifficultyForLevel = Math.min(Math.floor(userLevel / 2) + 1, 5);
     const suitableFacts = facts.filter(fact => fact.difficultyLevel <= maxDifficultyForLevel);
 
+    // Diagnostics (can remove/disable in production)
     console.log("SurpriseBox selectFactBasedOnPreferences", {
       preferences, userLevel, dayOfYear, maxDifficultyForLevel, suitableFactsLength: suitableFacts.length, factsLength: facts.length
     });
 
+    let fact: Fact | undefined = undefined;
+
     // If user has no preferences yet, use difficulty-appropriate selection
     if (Object.keys(preferences).length === 0) {
-      const factIndex = (dayOfYear + userLevel * 2) % suitableFacts.length;
-      const fact = suitableFacts[factIndex];
-      console.log("SurpriseBox picked (no prefs)", { fact, factIndex });
-      return fact;
+      if (suitableFacts.length > 0) {
+        const factIndex = (dayOfYear + userLevel * 2) % suitableFacts.length;
+        fact = suitableFacts[factIndex];
+        console.log("SurpriseBox picked (no prefs)", { fact, factIndex });
+      }
+    } else if (suitableFacts.length > 0) {
+      // Weight facts by user preferences and difficulty
+      const weightedFacts = suitableFacts.map(f => ({
+        ...f,
+        weight: (preferences[f.category] || 2.5) + (f.difficultyLevel * 0.1)
+      }));
+
+      weightedFacts.sort((a, b) => {
+        if (b.weight !== a.weight) return b.weight - a.weight;
+        return (dayOfYear + userLevel) % 2 === 0 ? 1 : -1;
+      });
+
+      const topFacts = weightedFacts.slice(0, 3);
+      fact = topFacts[(dayOfYear + userLevel) % topFacts.length];
+      console.log("SurpriseBox picked (prefs)", { chosen: fact, topFacts });
     }
 
-    // Weight facts by user preferences and difficulty
-    const weightedFacts = suitableFacts.map(fact => ({
-      ...fact,
-      weight: (preferences[fact.category] || 2.5) + (fact.difficultyLevel * 0.1) // slight preference for higher difficulty
-    }));
-
-    // Sort by preference and use day/level as tiebreaker
-    weightedFacts.sort((a, b) => {
-      if (b.weight !== a.weight) return b.weight - a.weight;
-      return (dayOfYear + userLevel) % 2 === 0 ? 1 : -1;
-    });
-
-    // Return top preferred fact with some randomness
-    const topFacts = weightedFacts.slice(0, 3);
-    const chosen = topFacts[(dayOfYear + userLevel) % topFacts.length];
-    console.log("SurpriseBox picked (prefs)", { chosen, topFacts });
-    return chosen;
+    // Fallback if no fact found
+    if (!fact) {
+      const fallbackPick = fallbackFacts[(dayOfYear + userLevel) % fallbackFacts.length];
+      console.log("SurpriseBox fallbackFact used", { fallbackPick });
+      return fallbackPick;
+    }
+    return fact;
   };
 
   const toggleDailyReminders = () => {
