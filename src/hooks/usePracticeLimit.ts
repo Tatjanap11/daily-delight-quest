@@ -1,9 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { checkAndUpgradeStorage } from "../utils/storageVersion";
 
 export function usePracticeLimit(maxPracticePerDay: number = 3) {
-  useEffect(() => { checkAndUpgradeStorage(); }, []);
   const [practiceCount, setPracticeCount] = useState(0);
 
   useEffect(() => {
