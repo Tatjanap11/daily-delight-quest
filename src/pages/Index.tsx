@@ -17,6 +17,7 @@ const Index = () => {
   const [userStats, setUserStats] = useState({
     level: 1,
     points: 0,
+    // Store boxesOpened as daily array, not just a count
     boxesOpened: 0,
     streak: 0,
     totalCorrectAnswers: 0
@@ -85,29 +86,6 @@ const Index = () => {
     }
   }, []);
 
-  // This effect always syncs boxesOpened to localStorage boxHistory length
-  useEffect(() => {
-    function syncBoxesOpenedFromStorage() {
-      const boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
-      const totalBoxesOpened = boxHistory.length;
-      setUserStats((prev) => ({ ...prev, boxesOpened: totalBoxesOpened }));
-    }
-
-    // On mount, sync once
-    syncBoxesOpenedFromStorage();
-
-    // On storage event (multi-tab), sync when boxHistory changes
-    function onStorage(e: StorageEvent) {
-      if (e.key === 'boxHistory') {
-        syncBoxesOpenedFromStorage();
-      }
-    }
-    window.addEventListener('storage', onStorage);
-    return () => {
-      window.removeEventListener('storage', onStorage);
-    };
-  }, []);
-
   const handlePuzzleComplete = (points: number) => {
     const today = new Date().toDateString();
     const newStats = {
@@ -133,15 +111,22 @@ const Index = () => {
 
   // Called from SurpriseBox when a box is opened (daily or additional)
   const handleBoxOpened = () => {
+    // We'll count total boxes ever opened, not just 1 per day
     let boxHistory = JSON.parse(localStorage.getItem('boxHistory') || '[]');
     const today = new Date().toDateString();
+
+    // Instead of just one per day, count every opening
+    // We'll push an entry for each open, not aggregate by day
     boxHistory.push({ date: today, timestamp: Date.now() });
 
     localStorage.setItem('boxHistory', JSON.stringify(boxHistory));
-    // Always recompute boxesOpened from latest boxHistory
+
+    // Count all box openings
     const total = boxHistory.length;
-    setUserStats((prev) => {
+
+    setUserStats(prev => {
       const nextStats = { ...prev, boxesOpened: total };
+      // Also write back to localStorage for persistence
       localStorage.setItem('userStats', JSON.stringify(nextStats));
       return nextStats;
     });
