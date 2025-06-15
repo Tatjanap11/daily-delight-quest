@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Star, Gift, Brain, Zap, Target } from 'lucide-react';
+import BoxHistoryList from "./BoxHistoryList";
 
 interface UserStatsProps {
   stats: {
@@ -181,6 +182,9 @@ const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Box History List (new!) */}
+      <BoxHistoryList />
     </div>
   );
 };
